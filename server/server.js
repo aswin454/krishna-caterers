@@ -40,7 +40,9 @@ const Enquiry = mongoose.model('Enquiry', enquirySchema);
 // In-memory fallback if no DB
 const mockEnquiries = [];
 
-app.post('/api/enquiries', async (req, res) => {
+const router = express.Router();
+
+router.post('/enquiries', async (req, res) => {
   try {
     const data = req.body;
     
@@ -59,7 +61,7 @@ app.post('/api/enquiries', async (req, res) => {
 });
 
 // Google Drive OAuth Routes
-app.get('/api/auth/google', (req, res) => {
+router.get('/auth/google', (req, res) => {
   try {
     const url = getAuthUrl();
     res.redirect(url);
@@ -69,7 +71,7 @@ app.get('/api/auth/google', (req, res) => {
   }
 });
 
-app.get('/api/auth/google/callback', async (req, res) => {
+router.get('/auth/google/callback', async (req, res) => {
   const { code } = req.query;
   if (!code) {
     return res.status(400).send('Authorization code missing');
@@ -85,14 +87,14 @@ app.get('/api/auth/google/callback', async (req, res) => {
   }
 });
 
-app.get('/api/auth/google/status', (req, res) => {
+router.get('/auth/google/status', (req, res) => {
   res.json({
     connected: isGoogleDriveConnected(),
     folderId: process.env.GOOGLE_DRIVE_FOLDER_ID !== 'your_google_drive_folder_id_here' ? process.env.GOOGLE_DRIVE_FOLDER_ID : null
   });
 });
 
-app.get('/api/gallery', async (req, res) => {
+router.get('/gallery', async (req, res) => {
   try {
     if (!isGoogleDriveConnected()) {
       return res.status(400).json({
@@ -101,7 +103,7 @@ app.get('/api/gallery', async (req, res) => {
       });
     }
     const host = req.get('host');
-    const protocol = req.protocol;
+    const protocol = req.protocol || 'https';
     const baseUrl = `${protocol}://${host}`;
     const images = await getDriveImages(baseUrl);
     res.json({ images });
@@ -115,7 +117,7 @@ app.get('/api/gallery', async (req, res) => {
   }
 });
 
-app.get('/api/gallery/image/:id', async (req, res) => {
+router.get('/gallery/image/:id', async (req, res) => {
   try {
     const fileId = req.params.id;
     const width = req.query.w || '600';
@@ -130,13 +132,16 @@ app.get('/api/gallery/image/:id', async (req, res) => {
   }
 });
 
-app.get('/api/health', (req, res) => {
+router.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK' });
 });
+
+// Mount router for both /api prefix and root
+app.use('/api', router);
+app.use('/', router);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
 export default app;
-
