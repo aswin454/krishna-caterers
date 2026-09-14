@@ -367,27 +367,25 @@ export async function getDriveImages(baseUrl = '') {
               .trim();
         }
 
+        const directCdnImage = file.thumbnailLink
+          ? file.thumbnailLink.replace(/=s\d+$/, '=w800')
+          : `https://lh3.googleusercontent.com/d/${file.id}=w800`;
+
+        const directCdnFull = file.thumbnailLink
+          ? file.thumbnailLink.replace(/=s\d+$/, '=w1600')
+          : `https://lh3.googleusercontent.com/d/${file.id}=w1600`;
+
         return {
           id: file.id,
-
           category,
-
           title,
-
-          image:
-            `${baseUrl}/api/gallery/image/${file.id}?w=600`,
-
-          fullImage:
-            `${baseUrl}/api/gallery/image/${file.id}?w=1600`,
-
-          driveUrl:
-            `https://drive.google.com/file/d/${file.id}/view`,
-
-          createdTime:
-            file.createdTime,
-
-          mimeType:
-            file.mimeType,
+          image: directCdnImage,
+          fullImage: directCdnFull,
+          proxyImage: `${baseUrl}/api/gallery/image/${file.id}?w=600`,
+          proxyFullImage: `${baseUrl}/api/gallery/image/${file.id}?w=1600`,
+          driveUrl: `https://drive.google.com/file/d/${file.id}/view`,
+          createdTime: file.createdTime,
+          mimeType: file.mimeType,
         };
       }
     );

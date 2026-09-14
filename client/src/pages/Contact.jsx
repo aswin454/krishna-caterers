@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Phone, Mail, MapPin, ArrowRight, X, Check, HelpCircle, User, Users, Calendar, ChefHat, Sparkles, Send } from 'lucide-react';
 import { siteConfig } from '../data/siteConfig';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
 
 const Contact = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
