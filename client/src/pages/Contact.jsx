@@ -153,9 +153,16 @@ const Contact = () => {
                   Office & Kitchen
                 </h3>
                 <p className="text-lighttext/90 text-sm sm:text-base leading-relaxed font-sans font-light">
-                  123 Temple Road,<br />
-                  Cochin, Kerala 682011<br />
-                  India
+                  <a
+                    href={siteConfig.contact.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-primary transition-colors duration-300 inline-block"
+                  >
+                    WCW8+746, Chemmanadu,<br />
+                    Thiruvaniyoor, Kerala 682308<br />
+                    India
+                  </a>
                 </p>
               </div>
 

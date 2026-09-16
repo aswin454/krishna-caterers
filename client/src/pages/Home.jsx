@@ -6,6 +6,7 @@ import { servicesData } from '../data/servicesData';
 import TasteCarousel from '../components/TasteCarousel';
 import { UtensilsCrossed, Leaf, Star, Sparkles, ChefHat, BookOpen, PartyPopper } from 'lucide-react';
 import StrokeText from '../components/StrokeText';
+import MoltenMetal from '../components/MoltenMetal';
 
 const Home = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -59,9 +60,9 @@ const Home = () => {
             <Link to="/contact" className="btn-primary text-center">Book Catering</Link>
             <Link to="/menu" className="btn-secondary border-lighttext text-lighttext hover:bg-lighttext hover:text-primary text-center">Explore Our Menu</Link>
           </div>
- 
+
           {/* Hero Stats */}
-          <div className="flex items-center gap-8 md:gap-16 pt-6 md:pt-8 border-t border-white/10 max-w-md">
+          <div className="flex items-center gap-8 md:gap-16 pt-6 md:pt-8 max-w-md">
             <div>
               <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1">250+</h3>
               <p className="text-lighttext/85 text-xs md:text-sm uppercase tracking-wider font-semibold">Events Catered</p>
@@ -78,6 +79,30 @@ const Home = () => {
 
       {/* Our Story Section */}
       <section className="py-24 relative overflow-hidden bg-darkbg">
+        {/* MoltenMetal Background Effect */}
+        <div className="absolute inset-0 pointer-events-none opacity-60 z-0">
+          <MoltenMetal
+            color1="#081c12"
+            color2="#143625"
+            color3="#d4af37"
+            speed={0.35}
+            scale={7.0}
+            detail={6}
+            glow={2.2}
+            coreSize={0.035}
+            swirl={2.0}
+            fold={-0.35}
+            blackPoint={0.03}
+            brightness={1.6}
+            colorMode="molten"
+            grain={true}
+            grainIntensity={0.16}
+            mouseInteraction={true}
+            mouseStrength={0.35}
+            opacity={0.85}
+            backgroundColor="#081c12"
+          />
+        </div>
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <img
@@ -114,8 +139,32 @@ const Home = () => {
       </section>
 
       {/* Why Choose Us - Interactive Hub Layout */}
-      <section className="py-24 bg-darkbg overflow-hidden">
-        <div className="w-full px-4 md:px-8">
+      <section className="py-24 bg-darkbg overflow-hidden relative">
+        {/* MoltenMetal Background Effect */}
+        <div className="absolute inset-0 pointer-events-none opacity-60 z-0">
+          <MoltenMetal
+            color1="#081c12"
+            color2="#143625"
+            color3="#d4af37"
+            speed={0.35}
+            scale={7.0}
+            detail={6}
+            glow={2.2}
+            coreSize={0.035}
+            swirl={2.0}
+            fold={-0.35}
+            blackPoint={0.03}
+            brightness={1.6}
+            colorMode="molten"
+            grain={true}
+            grainIntensity={0.16}
+            mouseInteraction={true}
+            mouseStrength={0.35}
+            opacity={0.85}
+            backgroundColor="#081c12"
+          />
+        </div>
+        <div className="w-full px-4 md:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
 
             {/* Left Content */}
@@ -220,8 +269,32 @@ const Home = () => {
       </section>
 
       {/* Specialties */}
-      <section className="py-20 bg-darkbg">
-        <div className="w-full px-4 md:px-8">
+      <section className="py-20 bg-darkbg overflow-hidden relative">
+        {/* MoltenMetal Background Effect */}
+        <div className="absolute inset-0 pointer-events-none opacity-60 z-0">
+          <MoltenMetal
+            color1="#081c12"
+            color2="#143625"
+            color3="#d4af37"
+            speed={0.35}
+            scale={7.0}
+            detail={6}
+            glow={2.2}
+            coreSize={0.035}
+            swirl={2.0}
+            fold={-0.35}
+            blackPoint={0.03}
+            brightness={1.6}
+            colorMode="molten"
+            grain={true}
+            grainIntensity={0.16}
+            mouseInteraction={true}
+            mouseStrength={0.35}
+            opacity={0.85}
+            backgroundColor="#081c12"
+          />
+        </div>
+        <div className="w-full px-4 md:px-8 relative z-10">
           <div className="text-left mb-16">
             <StrokeText
               text="A Taste of Kerala"

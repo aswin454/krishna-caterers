@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Gem, Leaf, Palette, ArrowRight } from 'lucide-react';
 import { siteConfig } from '../data/siteConfig';
+import LightRays from '../components/LightRays';
+import ScrollExpand from '../components/ScrollExpand';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -52,6 +54,7 @@ const About = () => {
   const containerRef = useRef(null);
   const timelineRef = useRef(null);
   const pathRef = useRef(null);
+  const mobilePathRef = useRef(null);
 
   useEffect(() => {
     let ctx = gsap.context(() => {
@@ -65,24 +68,26 @@ const About = () => {
         scale: 1.05, opacity: 0, duration: 1.5, ease: 'power2.out', delay: 0.2
       });
 
-      // Curved Path Animation
-      if (pathRef.current) {
-        const path = pathRef.current;
-        const length = path.getTotalLength();
+      // Path Animations (Desktop & Mobile)
+      [pathRef, mobilePathRef].forEach(ref => {
+        if (ref.current) {
+          const path = ref.current;
+          const length = path.getTotalLength();
 
-        gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
+          gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
 
-        gsap.to(path, {
-          strokeDashoffset: 0,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: timelineRef.current,
-            start: 'top 60%',
-            end: 'bottom 70%',
-            scrub: 1.5,
-          }
-        });
-      }
+          gsap.to(path, {
+            strokeDashoffset: 0,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: timelineRef.current,
+              start: 'top 60%',
+              end: 'bottom 70%',
+              scrub: 1.5,
+            }
+          });
+        }
+      });
 
       // Milestone Items fade in
       gsap.utils.toArray('.milestone-content').forEach((item) => {
@@ -135,10 +140,23 @@ const About = () => {
   return (
     <div className="relative bg-darkbg min-h-screen font-sans text-center overflow-hidden" ref={containerRef}>
       {/* Decorative Background Elements */}
-      <div className="fixed inset-0 pointer-events-none z-0">
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute inset-0" style={{ backgroundImage: bgPattern, backgroundSize: '60px 60px' }}></div>
         <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2"></div>
+        <div className="absolute inset-0 opacity-50 pointer-events-none">
+          <LightRays
+            raysOrigin="top-center"
+            raysColor="#d4af37"
+            raysSpeed={1.2}
+            lightSpread={0.8}
+            rayLength={1.8}
+            followMouse={true}
+            mouseInfluence={0.15}
+            noiseAmount={0.05}
+            distortion={0.05}
+          />
+        </div>
       </div>
 
       <div className="relative z-10 pt-32 pb-24 w-full max-w-7xl mx-auto px-4 md:px-8">
@@ -153,13 +171,32 @@ const About = () => {
           </p>
         </div>
 
-        {/* Hero Image */}
-        <div className="hero-intro w-full h-[300px] md:h-[500px] rounded-sm overflow-hidden mb-32 opacity-90 border border-white/5">
-          <img
+        {/* Hero Image with ScrollExpand */}
+        <div className="hero-intro w-full h-[450px] md:h-[650px] rounded-2xl overflow-hidden mb-32 relative shadow-2xl">
+          <ScrollExpand
             src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
             alt="Chef preparing fine dining"
-            className="w-full h-full object-cover object-center filter brightness-75 transition-transform duration-[3s] hover:scale-105"
-          />
+            title="Artisanal Mastery"
+            scrollHint="Scroll to expand view"
+            useWindowScroll={true}
+            startWidth={70}
+            startHeight={75}
+            startRadius={20}
+            endRadius={0}
+            mediaZoom={1.3}
+            scrollDistance={0.8}
+            holdDistance={0.2}
+            overlayScrim={0.85}
+          >
+            <div className="max-w-3xl text-center px-4">
+              <h2 className="text-2xl md:text-5xl font-serif text-primary mb-4 font-bold tracking-wide drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
+                Crafted with Tradition. Served with Elegance.
+              </h2>
+              <p className="text-sm md:text-lg text-lighttext/90 max-w-xl mx-auto font-light leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                Every event we cater is a symphony of authentic Kerala flavours, pristine organic ingredients, and immaculate presentation.
+              </p>
+            </div>
+          </ScrollExpand>
         </div>
 
         {/* Section 2: Scrolly Curved Timeline */}
@@ -170,13 +207,21 @@ const About = () => {
           </div>
 
           <div className="relative">
-            {/* The SVG Curve */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-[100px] sm:w-[150px] pointer-events-none">
+            {/* Desktop SVG Curve */}
+            <div className="hidden sm:block absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-[150px] pointer-events-none">
               <svg viewBox="0 0 100 1200" preserveAspectRatio="none" className="w-full h-full">
                 {/* Faint Background Path */}
                 <path d="M 50 0 C 50 40, 100 60, 100 100 C 100 180, 0 220, 0 300 C 0 380, 100 420, 100 500 C 100 580, 0 620, 0 700 C 0 780, 100 820, 100 900 C 100 980, 0 1020, 0 1100 C 0 1140, 50 1160, 50 1200" fill="none" stroke="#d4af37" strokeWidth="1" strokeDasharray="4 4" className="opacity-20" />
                 {/* Animated Foreground Path */}
                 <path ref={pathRef} d="M 50 0 C 50 40, 100 60, 100 100 C 100 180, 0 220, 0 300 C 0 380, 100 420, 100 500 C 100 580, 0 620, 0 700 C 0 780, 100 820, 100 900 C 100 980, 0 1020, 0 1100 C 0 1140, 50 1160, 50 1200" fill="none" stroke="#d4af37" strokeWidth="4" />
+              </svg>
+            </div>
+
+            {/* Mobile Straight Vertical Line (passing perfectly through center of mobile dots) */}
+            <div className="sm:hidden absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-[2px] pointer-events-none z-10">
+              <svg viewBox="0 0 2 1200" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                <line x1="1" y1="0" x2="1" y2="1200" stroke="#d4af37" strokeWidth="2" strokeDasharray="4 4" className="opacity-25" />
+                <path ref={mobilePathRef} d="M 1 0 L 1 1200" fill="none" stroke="#d4af37" strokeWidth="3" />
               </svg>
             </div>
 

@@ -6,7 +6,8 @@ export const siteConfig = {
     phone: "+91 9947761056 ",
     whatsapp: "+91 9207761056",
     email: "Krishnacatering.upr@gmail.com",
-    address: "123 Temple Road, Cochin, Kerala 682011",
+    address: "WCW8+746, Chemmanadu, Thiruvaniyoor, Kerala 682308",
+    mapsUrl: "https://www.google.com/maps/search/?api=1&query=WCW8%2B746,+Chemmanadu,+Thiruvaniyoor,+Kerala+682308",
     whatsappMessage: "Hello Krishna Caterers, I would like to enquire about catering services."
   },
   social: {
