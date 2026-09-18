@@ -4,6 +4,7 @@ import StrokeText from '../components/StrokeText';
 
 const Menu = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -12,17 +13,25 @@ const Menu = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const categories = ['All', ...new Set(menuData.map(item => item.category))];
+
+  const filteredItems = activeCategory === 'All'
+    ? menuData
+    : menuData.filter(item => item.category === activeCategory);
+
   return (
     <div className="bg-darkbg min-h-screen pb-20">
       {/* Half Size Hero Section */}
-      <div className="relative h-[40vh] md:h-[50vh] w-full flex items-center justify-center px-4 md:px-8 pt-20">
+      <div className="relative h-[45vh] md:h-[52vh] w-full flex items-center justify-center px-4 md:px-8 pt-28 md:pt-36">
         <div className="absolute inset-0 z-0">
           <img src="/images/menu.jpeg" alt="Our Menu" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-black/60"></div>
+          <div className="absolute inset-0 bg-black/65"></div>
         </div>
         <div className="relative z-10 text-center w-full max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 text-primary">Our Menu</h1>
-          <p className="text-base sm:text-lg text-lighttext/90 max-w-2xl mx-auto px-4">Explore our wide variety of authentic vegetarian delicacies.</p>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 text-primary tracking-wide">Our Menu</h1>
+          <p className="text-base sm:text-lg text-lighttext/90 max-w-2xl mx-auto px-4 leading-relaxed font-light">
+            Explore our curated selection of authentic Kerala vegetarian delicacies, prepared with traditional recipes and fine ingredients.
+          </p>
         </div>
       </div>
 
@@ -51,13 +60,13 @@ const Menu = () => {
           </div>
           <div className="w-full md:w-7/12 text-left">
             <p className="text-base md:text-lg text-lighttext/70 leading-relaxed">
-              Our experienced event specialists will help you plan a customized catering menu that incorporates your special event details, including party themes, special tastes, or special diets. The Krishna Caterers team looks forward to designing a menu uniquely suited to you – or select your menu from our extensive selections. Our event planners would love to meet with you and help you design a menu that is uniquely suited to your event.
+              Our experienced event specialists will help you plan a customized catering menu that incorporates your special event details, including party themes, special tastes, or special diets. The Krishna Caterers team looks forward to designing a menu uniquely suited to you – or select your menu from our extensive selections.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Menu Grid - Displaying all items directly */}
+      {/* Menu Grid - Displaying items with interactive Category Tabs */}
       <section className="py-16 md:py-24 relative overflow-hidden bg-darkbg border-t border-white/5">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
@@ -74,9 +83,9 @@ const Menu = () => {
         </div>
 
         <div className="w-full px-4 md:px-8 max-w-7xl mx-auto relative z-10">
-          <div className="mb-10 md:mb-16 text-left">
+          <div className="mb-10 md:mb-12 text-left">
             <StrokeText
-              text="Our Delicious Offerings"
+              text="Our Culinary Offerings"
               strokeColor="#d4af37"
               fillColor="#e7d12bff"
               strokeWidth={1.5}
@@ -94,8 +103,26 @@ const Menu = () => {
             <p className="text-lighttext/70 text-sm sm:text-base max-w-2xl">Experience the rich, authentic flavors of our featured dishes.</p>
           </div>
 
+          {/* Non-overlapping Category Tabs */}
+          <div className="flex flex-wrap gap-2.5 mb-10 justify-start relative z-20">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${
+                  activeCategory === cat
+                    ? 'bg-primary text-darkbg border-primary shadow-[0_0_15px_rgba(212,175,55,0.3)]'
+                    : 'bg-secondary/40 hover:bg-secondary/70 text-lighttext/80 hover:text-lighttext border-white/10'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Menu Items Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {menuData.map(item => (
+            {filteredItems.map(item => (
               <div
                 key={item.id}
                 className="bg-secondary/70 backdrop-blur-sm border border-primary/20 rounded-2xl overflow-hidden group hover:border-primary/50 transition-all duration-300 shadow-lg flex flex-col justify-between"
@@ -108,12 +135,12 @@ const Menu = () => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-secondary via-transparent to-transparent opacity-80"></div>
-                    <span className="absolute top-4 right-4 bg-darkbg/80 backdrop-blur-md text-primary text-xs font-semibold px-3 py-1 rounded-full border border-primary/30">
+                    <span className="absolute top-4 right-4 bg-darkbg/85 backdrop-blur-md text-primary text-xs font-semibold px-3 py-1 rounded-full border border-primary/30">
                       {item.category}
                     </span>
                   </div>
                   <div className="p-5 md:p-6 text-left">
-                    <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-lighttext group-hover:text-primary transition-colors">{item.name}</h3>
+                    <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-lighttext group-hover:text-primary transition-colors capitalize">{item.name}</h3>
                     <p className="text-lighttext/70 text-xs sm:text-sm leading-relaxed">{item.description}</p>
                   </div>
                 </div>
@@ -122,9 +149,9 @@ const Menu = () => {
           </div>
 
           <div className="text-center md:text-left mt-12 md:mt-16 pt-8 border-t border-white/5">
-            <button className="btn-secondary text-primary border-primary/40 hover:bg-primary hover:text-darkbg w-full sm:w-auto">
-              Download Full Menu (PDF)
-            </button>
+            <Link to="/contact" className="btn-secondary text-primary border-primary/40 hover:bg-primary hover:text-darkbg inline-block text-center w-full sm:w-auto">
+              Request Full Catering Menu
+            </Link>
           </div>
         </div>
       </section>

@@ -1,7 +1,7 @@
 export const siteConfig = {
   businessName: "Krishna Caterers",
   tagline: "Traditional Vegetarian Flavours. Perfectly Served.",
-  shortDescription: "Authentic Kerala vegetarian cuisine prepared with quality ingredients, traditional recipes, and the care your celebrations deserve.",
+  shortDescription: "Authentic Kerala vegetarian cuisine prepared with handpicked premium ingredients, traditional recipes, and the care your celebrations deserve.",
   contact: {
     phone: "+91 9947761056 ",
     whatsapp: "+91 9207761056",

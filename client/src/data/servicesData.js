@@ -12,7 +12,7 @@ export const servicesData = [
   {
     id: 3,
     title: "Corporate Catering",
-    description: "Professional breakfast, lunch and snack services tailored for business events, meetings, and office celebrations."
+    description: "Bespoke breakfast, banquet lunch, and evening delicacy services tailored for corporate events, executive meetings, and celebrations."
   },
   {
     id: 4,

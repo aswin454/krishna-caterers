@@ -63,7 +63,10 @@ router.post('/enquiries', async (req, res) => {
 // Google Drive OAuth Routes
 router.get('/auth/google', (req, res) => {
   try {
-    const url = getAuthUrl();
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+    const host = req.get('host');
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${protocol}://${host}/api/auth/google/callback`;
+    const url = getAuthUrl(redirectUri);
     res.redirect(url);
   } catch (error) {
     console.error('Error initiating Google OAuth:', error);
@@ -78,8 +81,11 @@ router.get('/auth/google/callback', async (req, res) => {
   }
   
   try {
-    await getTokensFromCode(code);
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+    const host = req.get('host');
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${protocol}://${host}/api/auth/google/callback`;
+    await getTokensFromCode(code, redirectUri);
+    const clientUrl = process.env.CLIENT_URL || `${protocol}://${host}`;
     res.redirect(`${clientUrl}/gallery?connected=true`);
   } catch (error) {
     console.error('Error during Google OAuth callback:', error);
@@ -90,7 +96,7 @@ router.get('/auth/google/callback', async (req, res) => {
 router.get('/auth/google/status', (req, res) => {
   res.json({
     connected: isGoogleDriveConnected(),
-    folderId: process.env.GOOGLE_DRIVE_FOLDER_ID !== 'your_google_drive_folder_id_here' ? process.env.GOOGLE_DRIVE_FOLDER_ID : null
+    folderId: process.env.GOOGLE_DRIVE_FOLDER_ID && process.env.GOOGLE_DRIVE_FOLDER_ID !== 'your_google_drive_folder_id_here' ? process.env.GOOGLE_DRIVE_FOLDER_ID : null
   });
 });
 
@@ -103,7 +109,7 @@ router.get('/gallery', async (req, res) => {
       });
     }
     const host = req.get('host');
-    const protocol = req.protocol || 'https';
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
     const baseUrl = `${protocol}://${host}`;
     const images = await getDriveImages(baseUrl);
     res.json({ images });
@@ -140,8 +146,11 @@ router.get('/health', (req, res) => {
 app.use('/api', router);
 app.use('/', router);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Only listen on port if running directly (not in Vercel serverless)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
 export default app;

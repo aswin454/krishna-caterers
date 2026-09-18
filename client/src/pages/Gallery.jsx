@@ -211,15 +211,15 @@ const Gallery = () => {
 
         {/* Dynamic Category Filtering */}
         {categories.length > 2 && (
-          <div className="flex flex-wrap gap-2 mb-8 justify-start">
+          <div className="flex flex-wrap gap-2.5 mb-10 justify-start relative z-20">
             {categories.map(cat => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 border ${
+                className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${
                   activeCategory === cat
-                    ? 'bg-primary text-darkbg border-primary'
-                    : 'bg-secondary/20 hover:bg-secondary/40 text-lighttext/70 hover:text-lighttext border-white/5'
+                    ? 'bg-primary text-darkbg border-primary shadow-[0_0_15px_rgba(212,175,55,0.3)]'
+                    : 'bg-secondary/40 hover:bg-secondary/70 text-lighttext/80 hover:text-lighttext border-white/10'
                 }`}
               >
                 {cat}
@@ -242,12 +242,21 @@ const Gallery = () => {
                 <div 
                   key={item.id} 
                   className="relative overflow-hidden cursor-pointer group aspect-square border border-white/5 shadow-lg bg-secondary/20 rounded-lg"
-                  onClick={() => setSelectedImage(item.fullImage || item.image)}
+                  onClick={() => setSelectedImage(item.proxyFullImage || item.fullImage || item.proxyImage || item.image)}
                 >
                   <img 
-                    src={item.image} 
+                    src={item.proxyImage || item.image} 
                     alt={item.title} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    onError={(e) => {
+                      if (item.image && e.target.src !== item.image && !e.target.dataset.triedOriginal) {
+                        e.target.dataset.triedOriginal = "true";
+                        e.target.src = item.image;
+                      } else if (!e.target.dataset.triedFallback) {
+                        e.target.dataset.triedFallback = "true";
+                        e.target.src = "/images/sadya.jpeg";
+                      }
+                    }}
                   />
                   {/* Elegant overlay on hover */}
                   <div className="absolute inset-0 bg-darkbg/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 text-center">
@@ -281,7 +290,14 @@ const Gallery = () => {
             onClick={() => setSelectedImage(null)}
           >
             <div className="relative max-w-5xl max-h-[90vh] overflow-hidden">
-              <img src={selectedImage} alt="Fullscreen View" className="max-w-full max-h-[85vh] object-contain shadow-2xl border border-white/10 rounded-lg" />
+              <img 
+                src={selectedImage} 
+                alt="Fullscreen View" 
+                className="max-w-full max-h-[85vh] object-contain shadow-2xl border border-white/10 rounded-lg"
+                onError={(e) => {
+                  e.target.src = "/images/sadya.jpeg";
+                }}
+              />
             </div>
             <button className="absolute top-6 right-6 text-lighttext hover:text-primary text-4xl font-light transition-colors duration-200">&times;</button>
           </div>

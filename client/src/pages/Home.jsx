@@ -219,40 +219,46 @@ const Home = () => {
 
                 {/* Orbiting Nodes */}
                 {[
-                  { icon: <UtensilsCrossed size={20} />, title: "Authentic Taste", desc: "Traditional Kerala recipes inspired by rich culinary heritage.", angle: 0 },
-                  { icon: <BookOpen size={20} />, title: "Custom Menus", desc: "Tailor-made menus designed to perfectly suit your special event.", angle: 60 },
-                  { icon: <Star size={20} />, title: "Quality Items", desc: "Fresh, locally sourced ingredients selected for every event.", angle: 120 },
-                  { icon: <PartyPopper size={20} />, title: "Every Occasion", desc: "Perfect catering for weddings, birthdays, and corporate events.", angle: 180 },
-                  { icon: <Leaf size={20} />, title: "100% Vegetarian", desc: "Pure vegetarian food prepared with utmost care and hygiene.", angle: 240 },
-                  { icon: <ChefHat size={20} />, title: "Professional", desc: "Experienced team delivering flawless catering service.", angle: 300 }
+                  { icon: <UtensilsCrossed size={20} />, title: "Heritage Flavors", desc: "Time-honored Kerala recipes passed down through generations.", angle: 0 },
+                  { icon: <BookOpen size={20} />, title: "Bespoke Curations", desc: "Tailor-made banquet spreads crafted specifically for your event.", angle: 60 },
+                  { icon: <Star size={20} />, title: "Premium Ingredients", desc: "Fresh, hand-selected, locally sourced ingredients for every banquet.", angle: 120 },
+                  { icon: <PartyPopper size={20} />, title: "Grand Celebrations", desc: "Royal wedding banquets, corporate galas & intimate family feasts.", angle: 180 },
+                  { icon: <Leaf size={20} />, title: "Pure Vegetarian", desc: "Sacred, authentic vegetarian cuisine prepared with unmatched hygiene.", angle: 240 },
+                  { icon: <ChefHat size={20} />, title: "Culinary Excellence", desc: "Seasoned master chefs and hospitality staff delivering flawless execution.", angle: 300 }
                 ].map((node, index) => {
                   return (
-                    <div key={index} className="absolute inset-0 pointer-events-none z-20 flex justify-center" style={{ transform: `rotate(${node.angle}deg)` }}>
+                    <div
+                      key={index}
+                      className="absolute inset-0 pointer-events-none z-20 group-hover:z-50 flex justify-center"
+                      style={{ transform: `rotate(${node.angle}deg)` }}
+                    >
                       {/* Position exactly on the outer circle edge */}
-                      <div className="absolute -top-1 md:-top-2 pointer-events-auto group">
+                      <div className="absolute -top-1 md:-top-2 pointer-events-auto group relative">
 
                         {/* Counter Spin to keep node upright during orbit */}
                         <div className="animate-spin" style={{ animation: 'spin 120s linear infinite reverse' }}>
 
                           {/* Cancel the placement rotation so the node is completely upright */}
-                          <div className="flex flex-col items-center" style={{ transform: `rotate(${-node.angle}deg)` }}>
-                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-darkbg border-2 border-primary/40 flex items-center justify-center text-lighttext/80 hover:text-primary hover:border-primary hover:bg-[#143625] transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(212,175,55,0.15)] relative">
+                          <div className="flex flex-col items-center relative" style={{ transform: `rotate(${-node.angle}deg)` }}>
+                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-darkbg border-2 border-primary/40 flex items-center justify-center text-lighttext/80 hover:text-primary hover:border-primary hover:bg-[#143625] transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(212,175,55,0.15)] relative z-20">
                               {node.icon}
 
-                              {/* Tooltip Popup */}
-                              <div className={`absolute w-48 md:w-60 p-4 rounded-xl bg-secondary border border-primary/40 shadow-2xl opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 ease-out pointer-events-none z-30
-                                ${node.angle === 0 ? 'top-full left-1/2 -translate-x-1/2 mt-3' : ''}
-                                ${node.angle === 180 ? 'bottom-full left-1/2 -translate-x-1/2 mb-3' : ''}
-                                ${(node.angle === 60 || node.angle === 120) ? 'right-full top-1/2 -translate-y-1/2 mr-3' : ''}
-                                ${(node.angle === 240 || node.angle === 300) ? 'left-full top-1/2 -translate-y-1/2 ml-3' : ''}
-                              `}>
-                                <h4 className="font-bold text-primary text-sm md:text-base mb-1">{node.title}</h4>
-                                <p className="text-xs text-lighttext/80 leading-relaxed">{node.desc}</p>
+                              {/* Smart Outward Tooltip Popup */}
+                              <div
+                                className={`absolute w-52 md:w-64 p-4 rounded-xl bg-[#06180e]/95 backdrop-blur-md border border-primary/60 shadow-[0_15px_35px_rgba(0,0,0,0.8)] opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 ease-out pointer-events-none z-50 text-left
+                                  ${(node.angle === 240 || node.angle === 300 || node.angle === 0) ? 'bottom-full left-1/2 -translate-x-1/2 mb-4' : 'top-full left-1/2 -translate-x-1/2 mt-4'}
+                                `}
+                              >
+                                <h4 className="font-bold text-primary text-sm md:text-base mb-1 flex items-center gap-1.5">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>
+                                  {node.title}
+                                </h4>
+                                <p className="text-xs text-lighttext/90 leading-relaxed">{node.desc}</p>
                               </div>
                             </div>
 
-                            {/* Static label below icon */}
-                            <span className="hidden sm:block absolute -bottom-6 text-[10px] md:text-xs text-lighttext/70 font-medium whitespace-nowrap">
+                            {/* Upright Label below icon */}
+                            <span className="hidden sm:block absolute -bottom-6 text-[10px] md:text-xs text-lighttext/80 font-semibold whitespace-nowrap bg-darkbg/80 px-2 py-0.5 rounded-full border border-white/5 backdrop-blur-xs">
                               {node.title}
                             </span>
                           </div>

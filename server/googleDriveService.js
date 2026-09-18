@@ -12,17 +12,35 @@ const TOKEN_PATH = path.join(__dirname, 'google-tokens.json');
 // ======================================================
 
 function loadTokens() {
-  if (!fs.existsSync(TOKEN_PATH)) {
-    return null;
+  // 1. Check for tokens in Environment Variables (for Vercel / serverless deployments)
+  if (process.env.GOOGLE_TOKENS_JSON) {
+    try {
+      return JSON.parse(process.env.GOOGLE_TOKENS_JSON);
+    } catch (error) {
+      console.error('Error parsing GOOGLE_TOKENS_JSON environment variable:', error);
+    }
   }
 
-  try {
-    const data = fs.readFileSync(TOKEN_PATH, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Error reading Google tokens:', error);
-    return null;
+  if (process.env.GOOGLE_REFRESH_TOKEN) {
+    return {
+      refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+      access_token: process.env.GOOGLE_ACCESS_TOKEN || null,
+      expires_in: 3600,
+      updatedAt: 0 // Force refresh on initial call to obtain access_token
+    };
   }
+
+  // 2. Fallback to local disk file (for local development)
+  if (fs.existsSync(TOKEN_PATH)) {
+    try {
+      const data = fs.readFileSync(TOKEN_PATH, 'utf8');
+      return JSON.parse(data);
+    } catch (error) {
+      console.error('Error reading Google tokens from disk:', error);
+    }
+  }
+
+  return null;
 }
 
 function saveTokens(tokens) {
@@ -35,12 +53,16 @@ function saveTokens(tokens) {
       updatedAt: Date.now(),
     };
 
-    fs.writeFileSync(
-      TOKEN_PATH,
-      JSON.stringify(merged, null, 2)
-    );
-
-    console.log('Google Drive tokens updated successfully.');
+    // Try persisting to disk if filesystem is writable
+    try {
+      fs.writeFileSync(
+        TOKEN_PATH,
+        JSON.stringify(merged, null, 2)
+      );
+      console.log('Google Drive tokens updated on disk successfully.');
+    } catch (fsErr) {
+      console.warn('Could not write tokens to disk (ephemeral/read-only environment):', fsErr.message);
+    }
 
     return merged;
   } catch (error) {
@@ -53,13 +75,15 @@ function saveTokens(tokens) {
 // OAUTH
 // ======================================================
 
-export function getAuthUrl() {
+export function getAuthUrl(redirectUri) {
   const rootUrl =
     'https://accounts.google.com/o/oauth2/v2/auth';
 
+  const finalRedirectUri = redirectUri || process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5000/api/auth/google/callback';
+
   const options = {
     client_id: process.env.GOOGLE_CLIENT_ID,
-    redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+    redirect_uri: finalRedirectUri,
     response_type: 'code',
     scope: 'https://www.googleapis.com/auth/drive.readonly',
     access_type: 'offline',
@@ -75,8 +99,10 @@ export function getAuthUrl() {
 // EXCHANGE AUTHORIZATION CODE FOR TOKENS
 // ======================================================
 
-export async function getTokensFromCode(code) {
+export async function getTokensFromCode(code, redirectUri) {
   try {
+    const finalRedirectUri = redirectUri || process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5000/api/auth/google/callback';
+
     const response = await fetch(
       'https://oauth2.googleapis.com/token',
       {
@@ -89,7 +115,7 @@ export async function getTokensFromCode(code) {
           code,
           client_id: process.env.GOOGLE_CLIENT_ID,
           client_secret: process.env.GOOGLE_CLIENT_SECRET,
-          redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+          redirect_uri: finalRedirectUri,
           grant_type: 'authorization_code',
         }),
       }
@@ -125,14 +151,14 @@ async function getValidAccessToken() {
 
   if (!tokens) {
     throw new Error(
-      'No Google authorization tokens found. Please connect your Google account.'
+      'No Google authorization tokens found. Please connect your Google account or set GOOGLE_REFRESH_TOKEN.'
     );
   }
 
   const expiresIn = Number(tokens.expires_in || 3600);
 
   const updatedAt = Number(
-    tokens.updatedAt || Date.now()
+    tokens.updatedAt || 0
   );
 
   const expiresAt =
@@ -149,12 +175,12 @@ async function getValidAccessToken() {
   // No refresh token
   if (!tokens.refresh_token) {
     throw new Error(
-      'No refresh token available. Please reconnect your Google account.'
+      'No refresh token available. Please reconnect your Google account or set GOOGLE_REFRESH_TOKEN.'
     );
   }
 
   console.log(
-    'Google access token expired. Refreshing...'
+    'Google access token expired or uninitialized. Refreshing...'
   );
 
   try {
@@ -211,7 +237,6 @@ export function isGoogleDriveConnected() {
     !!(
       process.env.GOOGLE_CLIENT_ID &&
       process.env.GOOGLE_CLIENT_SECRET &&
-      process.env.GOOGLE_REDIRECT_URI &&
       loadTokens()
     );
 

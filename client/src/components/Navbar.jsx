@@ -64,9 +64,6 @@ const Navbar = () => {
                 </Link>
               ))}
             </div>
-            <Link to="/contact" className="btn-primary text-sm px-6 py-2">
-              Book Catering
-            </Link>
           </div>
 
           {/* Mobile Toggle */}
@@ -89,9 +86,6 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
-          <Link to="/contact" onClick={() => setIsOpen(false)} className="btn-primary text-center">
-            Book Catering
-          </Link>
         </div>
       )}
     </nav>
