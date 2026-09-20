@@ -6,6 +6,8 @@ import {
   ShieldCheck, Navigation, HeartHandshake, CheckCircle2 
 } from 'lucide-react';
 import { siteConfig } from '../data/siteConfig';
+import GridMotionBackground from '../components/GridMotionBackground';
+import LightRays from '../components/LightRays';
 
 const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
 
@@ -185,9 +187,58 @@ const Contact = () => {
         }
       `}</style>
 
-      {/* Ambient Radial Background Lighting */}
-      <div className="absolute top-12 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full filter blur-[140px] pointer-events-none animate-stitch-pulse"></div>
-      <div className="absolute bottom-1/3 right-10 w-[600px] h-[600px] bg-secondary/30 rounded-full filter blur-[160px] pointer-events-none animate-stitch-pulse" style={{ animationDelay: '-3.5s' }}></div>
+      {/* React Bits Bright Motion Canvas & Lighting Layer */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* React Bits Interactive Motion Particle Grid Canvas (Bright Gold) */}
+        <GridMotionBackground
+          particleColor="#ffe066"
+          lineColor="rgba(255, 224, 102, 0.42)"
+          particleCount={85}
+          speed={0.65}
+          interactive={true}
+        />
+
+        {/* React Bits Light Rays Shimmer (Vivid Shimmering Beams) */}
+        <div className="absolute inset-0 opacity-60">
+          <LightRays
+            raysOrigin="top-center"
+            raysColor="#ffd700"
+            raysSpeed={0.9}
+            lightSpread={1.6}
+            rayLength={2.2}
+            followMouse={true}
+            mouseInfluence={0.2}
+          />
+        </div>
+
+        {/* Background Image with Dark Vignette */}
+        <img
+          src="/images/contact.jpeg"
+          alt="Krishna Catering Background"
+          className="w-full h-full object-cover opacity-[0.22] filter saturate-150 scale-105"
+          onError={(e) => { e.target.style.display = 'none'; }}
+        />
+        {/* Dark Vignette Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-darkbg/85 via-darkbg/70 to-darkbg"></div>
+
+        {/* High Contrast Gold Grid Dot Pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.14]" 
+          style={{
+            backgroundImage: `radial-gradient(#ffd700 1.2px, transparent 1.2px)`,
+            backgroundSize: `32px 32px`
+          }}
+        ></div>
+
+        {/* Bright Glowing Ambient Orbs */}
+        <div className="absolute top-10 left-1/4 w-[600px] h-[600px] bg-primary/30 rounded-full filter blur-[140px] animate-stitch-pulse"></div>
+        <div className="absolute bottom-1/3 right-10 w-[700px] h-[700px] bg-secondary/70 rounded-full filter blur-[150px] animate-stitch-pulse" style={{ animationDelay: '-3.5s' }}></div>
+        <div className="absolute top-1/2 -left-20 w-[450px] h-[450px] bg-amber-400/20 rounded-full filter blur-[120px] animate-stitch-pulse" style={{ animationDelay: '-2s' }}></div>
+
+        {/* Top and Bottom Fade Gradients */}
+        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-darkbg to-transparent"></div>
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-darkbg to-transparent"></div>
+      </div>
 
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
