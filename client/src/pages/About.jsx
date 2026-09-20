@@ -324,13 +324,13 @@ const About = () => {
                     {/* Mobile Layout (Stack) */}
                     <div className="sm:hidden flex flex-col items-center w-full relative z-10 pt-6">
                       <div className="milestone-dot absolute top-0 left-1/2 transform -translate-x-1/2 w-7 h-7 rounded-full bg-darkbg border-[4px] border-primary shadow-[0_0_20px_rgba(255,215,0,0.9)] z-20"></div>
-                      <div className="milestone-content flex flex-col items-center text-center stitch-card p-6 rounded-3xl w-full mt-4 text-left">
-                        <div className="w-full h-48 rounded-2xl overflow-hidden mb-4 border border-white/10">
+                      <div className="milestone-content flex flex-col items-center text-center p-4 w-full mt-4">
+                        <div className="w-full h-48 rounded-2xl overflow-hidden mb-4 border border-primary/20 shadow-xl">
                           <img src={m.image} alt={m.title} className="w-full h-full object-cover filter brightness-90" />
                         </div>
                         <span className="text-3xl font-serif font-bold text-primary mb-1 block">{m.year}</span>
                         <h3 className="text-lg font-bold text-lighttext mb-2">{m.title}</h3>
-                        <p className="text-xs text-lighttext/70 leading-relaxed font-light">{m.desc}</p>
+                        <p className="text-xs text-lighttext/80 leading-relaxed font-light">{m.desc}</p>
                       </div>
                     </div>
 
@@ -340,10 +340,10 @@ const About = () => {
                       {/* Left Side Container */}
                       <div className={`w-[42%] milestone-content ${isEven ? 'text-right' : 'text-left'}`}>
                         {isEven ? (
-                          <div className="stitch-card p-6 rounded-3xl text-right">
-                            <span className="text-4xl lg:text-5xl font-serif font-bold text-primary mb-2 block">{m.year}</span>
-                            <h3 className="text-xl font-bold text-lighttext mb-3">{m.title}</h3>
-                            <p className="text-xs sm:text-sm text-lighttext/70 leading-relaxed font-light">{m.desc}</p>
+                          <div className="p-4 text-right">
+                            <span className="text-4xl lg:text-6xl font-serif font-bold text-primary mb-2 block">{m.year}</span>
+                            <h3 className="text-xl lg:text-2xl font-bold text-lighttext mb-3">{m.title}</h3>
+                            <p className="text-xs sm:text-sm text-lighttext/85 leading-relaxed font-light">{m.desc}</p>
                           </div>
                         ) : (
                           <div className="w-full h-[230px] rounded-3xl overflow-hidden border border-primary/20 shadow-2xl group">
@@ -364,10 +364,10 @@ const About = () => {
                       {/* Right Side Container */}
                       <div className={`w-[42%] milestone-content ${!isEven ? 'text-left' : 'text-right'}`}>
                         {!isEven ? (
-                          <div className="stitch-card p-6 rounded-3xl text-left">
-                            <span className="text-4xl lg:text-5xl font-serif font-bold text-primary mb-2 block">{m.year}</span>
-                            <h3 className="text-xl font-bold text-lighttext mb-3">{m.title}</h3>
-                            <p className="text-xs sm:text-sm text-lighttext/70 leading-relaxed font-light">{m.desc}</p>
+                          <div className="p-4 text-left">
+                            <span className="text-4xl lg:text-6xl font-serif font-bold text-primary mb-2 block">{m.year}</span>
+                            <h3 className="text-xl lg:text-2xl font-bold text-lighttext mb-3">{m.title}</h3>
+                            <p className="text-xs sm:text-sm text-lighttext/85 leading-relaxed font-light">{m.desc}</p>
                           </div>
                         ) : (
                           <div className="w-full h-[230px] rounded-3xl overflow-hidden border border-primary/20 shadow-2xl group">
