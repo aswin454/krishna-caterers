@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { 
+  Instagram, RefreshCw, CheckCircle2, AlertTriangle, ExternalLink, 
+  Search, X, ChevronLeft, ChevronRight, Maximize2, Sparkles, 
+  ShieldCheck, Camera, ArrowRight, Settings, Image as ImageIcon 
+} from 'lucide-react';
 import { galleryData } from '../data/galleryData';
-import { Instagram, RefreshCw, CheckCircle2, AlertTriangle, ExternalLink } from 'lucide-react';
 import { siteConfig } from '../data/siteConfig';
 
 const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
@@ -11,15 +16,17 @@ const Gallery = () => {
   const [isDriveConnected, setIsDriveConnected] = useState(false);
   const [showConfig, setShowConfig] = useState(false);
   const [syncError, setSyncError] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
+  
+  const [selectedIndex, setSelectedIndex] = useState(null);
   const [activeCategory, setActiveCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   const fetchConnectionAndImages = async () => {
     setLoading(true);
     setSyncError(null);
     try {
-      // 1. Check if connected
+      // 1. Check connection status
       const statusRes = await fetch(`${API_BASE}/api/auth/google/status`);
       let statusData = { connected: false };
       if (statusRes.ok) {
@@ -34,21 +41,19 @@ const Gallery = () => {
         if (galleryDataJson.images && galleryDataJson.images.length > 0) {
           setImages(galleryDataJson.images);
         } else {
-          // Connected, but folder is empty or couldn't parse
           setImages(galleryData);
           if (statusData.connected) {
-            setSyncError("Connected, but no images found in the Google Drive folder. Please upload images to your folder.");
+            setSyncError("Connected, but no images found in Google Drive folder.");
           }
         }
       } else {
-        // Fallback to local mock data
         setImages(galleryData);
         if (statusData.connected) {
-          setSyncError("Connected, but failed to fetch images from Drive. Please check your folder's access permissions.");
+          setSyncError("Drive connected, but failed to fetch image list. Using local gallery.");
         }
       }
     } catch (err) {
-      console.warn("Could not connect to backend server. Using offline mock gallery.", err);
+      console.warn("Could not connect to backend server. Using local mock gallery.", err);
       setImages(galleryData);
     } finally {
       setLoading(false);
@@ -56,7 +61,6 @@ const Gallery = () => {
   };
 
   useEffect(() => {
-    // Check for success URL query parameter
     const params = new URLSearchParams(window.location.search);
     if (params.get('connected') === 'true') {
       setShowSuccessToast(true);
@@ -68,157 +72,134 @@ const Gallery = () => {
     fetchConnectionAndImages();
   }, []);
 
-  // Dynamically extract categories from current images list
-  const categories = ['All', ...new Set(images.map(img => img.category))];
+  // Dynamically extract categories
+  const categories = ['All', ...new Set(images.map(img => img.category || 'Catering'))];
 
-  const filteredImages = activeCategory === 'All' 
-    ? images 
-    : images.filter(img => img.category === activeCategory);
+  // Filter images by active category and search query
+  const filteredImages = images.filter(img => {
+    const matchesCategory = activeCategory === 'All' || img.category === activeCategory;
+    const titleMatch = (img.title || '').toLowerCase().includes(searchQuery.toLowerCase());
+    const catMatch = (img.category || '').toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && (titleMatch || catMatch);
+  });
+
+  // Keyboard navigation for Lightbox
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (selectedIndex === null) return;
+      if (e.key === 'Escape') setSelectedIndex(null);
+      if (e.key === 'ArrowRight') handleNextImage();
+      if (e.key === 'ArrowLeft') handlePrevImage();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedIndex, filteredImages.length]);
+
+  const handleNextImage = () => {
+    if (selectedIndex === null || filteredImages.length === 0) return;
+    setSelectedIndex((prev) => (prev + 1) % filteredImages.length);
+  };
+
+  const handlePrevImage = () => {
+    if (selectedIndex === null || filteredImages.length === 0) return;
+    setSelectedIndex((prev) => (prev - 1 + filteredImages.length) % filteredImages.length);
+  };
+
+  const selectedItem = selectedIndex !== null ? filteredImages[selectedIndex] : null;
 
   return (
-    <div className="pt-32 pb-24 bg-darkbg min-h-screen">
-      <div className="w-full px-4 md:px-8 max-w-7xl mx-auto">
+    <div className="pt-28 md:pt-36 pb-24 md:pb-32 bg-darkbg min-h-screen relative overflow-hidden font-sans text-lighttext selection:bg-primary selection:text-darkbg">
+      {/* Google Stitch Micro-Animation Styles */}
+      <style>{`
+        @keyframes stitchFadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes stitchPulse {
+          0%, 100% { opacity: 0.18; transform: scale(1); }
+          50% { opacity: 0.32; transform: scale(1.06); }
+        }
+        .stitch-card {
+          background: rgba(20, 54, 37, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(212, 175, 55, 0.18);
+          transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .stitch-card:hover {
+          border-color: rgba(212, 175, 55, 0.5);
+          transform: translateY(-3px);
+          box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 25px -5px rgba(212, 175, 55, 0.15);
+        }
+        .stitch-chip-active {
+          background: #d4af37 !important;
+          color: #081c12 !important;
+          font-weight: 700;
+          box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+        }
+        .animate-stitch-up {
+          animation: stitchFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-stitch-pulse {
+          animation: stitchPulse 8s ease-in-out infinite;
+        }
+      `}</style>
+
+      {/* Ambient Radial Background Glows */}
+      <div className="absolute top-16 left-1/3 w-[550px] h-[550px] bg-primary/10 rounded-full filter blur-[150px] pointer-events-none animate-stitch-pulse"></div>
+      <div className="absolute bottom-1/4 right-8 w-[600px] h-[600px] bg-secondary/30 rounded-full filter blur-[160px] pointer-events-none animate-stitch-pulse" style={{ animationDelay: '-4s' }}></div>
+
+      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10">
         
-        {/* Success Alert */}
+        {/* Success Alert Toast */}
         {showSuccessToast && (
-          <div className="mb-6 p-4 bg-green-950/80 border border-green-500/40 text-green-400 rounded-xl flex items-center gap-3 animate-fade-in shadow-lg">
-            <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" />
+          <div className="mb-6 p-4 bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 rounded-2xl flex items-center gap-3 animate-stitch-up shadow-2xl">
+            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
             <div>
-              <p className="font-bold text-sm">Successfully Connected to Google Drive!</p>
-              <p className="text-xs text-green-400/80">Your event photos are now actively syncing with your gallery.</p>
+              <p className="font-bold text-sm">Google Drive Connected!</p>
+              <p className="text-xs text-emerald-300/80">Your event photos are now dynamically syncing with the gallery.</p>
             </div>
           </div>
         )}
 
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 pb-6 border-b border-white/10">
-          <div className="text-left">
-            <h1 className="text-3xl md:text-5xl font-serif text-lighttext tracking-wide uppercase leading-tight">
-              <span className="font-light block text-lighttext/70 text-2xl md:text-3xl mb-1">YOUR INSIDE LOOK:</span>
-              <span className="font-bold block text-primary">KRISHNA EVENT GALLERY</span>
-            </h1>
+        {/* ================= HERO HEADER ================= */}
+        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-14 animate-stitch-up">
+          <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 bg-secondary/60 backdrop-blur-md border border-primary/30 px-4 py-1.5 rounded-full mb-4 text-xs font-medium shadow-lg">
+            <span className="flex items-center gap-1.5 text-primary font-bold">
+              <Camera className="w-4 h-4 text-primary" /> Event Portfolio
+            </span>
+            <span className="text-lighttext/30">•</span>
+            <span className="text-lighttext/80 flex items-center gap-1">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" /> Authentic Kerala Celebrations
+            </span>
           </div>
-          <div className="flex flex-col items-start md:items-end w-full md:w-auto">
-            <div className="flex items-center gap-4 mb-3">
-              <span className="text-xs md:text-sm font-semibold tracking-[0.25em] text-lighttext/85 uppercase font-sans">
-                FOOD. ATMOSPHERE. JOY.
-              </span>
-              <a 
-                href={siteConfig.social.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 hover:border-primary/50 text-lighttext/70 hover:text-primary transition-all duration-300 bg-secondary/10"
-                title="View more on Instagram"
-              >
-                <Instagram className="w-4 h-4" />
-                <span className="text-[10px] font-semibold tracking-wider uppercase">More Images</span>
-              </a>
-            </div>
-            <div className="w-full md:w-64 h-[1.5px] bg-primary/50"></div>
-          </div>
+
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold text-lighttext leading-[1.15] mb-4">
+            Krishna Catering <br className="hidden sm:inline" />
+            <span className="text-primary italic font-serif">Visual Gallery</span>
+          </h1>
+
+          <p className="text-base sm:text-lg text-lighttext/70 font-light leading-relaxed max-w-2xl mx-auto">
+            Step inside our world of traditional Kerala Sadyas, vibrant feast setups, artisanal kitchen craft, and memorable celebrations.
+          </p>
         </div>
 
-        {/* Google Drive Connection Dashboard */}
-        {showConfig && (
-          <div className="mb-10 p-6 bg-secondary/20 border border-primary/20 rounded-2xl backdrop-blur-md shadow-xl animate-slide-down">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-white/5">
-              <div>
-                <h3 className="text-base font-bold font-serif text-primary flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full ${isDriveConnected ? 'bg-green-500 animate-pulse' : 'bg-yellow-500'}`}></span>
-                  Google Drive Connection Control
-                </h3>
-                <p className="text-xs text-lighttext/60 mt-0.5">
-                  Synchronize your gallery to dynamically display images from a Google Drive folder.
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={fetchConnectionAndImages}
-                  className="p-1.5 text-xs text-lighttext/60 hover:text-primary border border-white/10 rounded-lg flex items-center gap-1 bg-darkbg/50"
-                  disabled={loading}
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-                  Refresh Sync
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-              <div className="text-xs text-lighttext/70 space-y-3">
-                <h4 className="font-bold text-lighttext text-sm">How to link your Drive folder:</h4>
-                <ol className="list-decimal list-inside space-y-2">
-                  <li>Create a folder on Google Drive for your event photos.</li>
-                  <li>Set general folder sharing to <strong className="text-primary font-medium">"Anyone with the link can view"</strong> so the web app can access the images.</li>
-                  <li>Copy the folder ID from the browser URL address bar (e.g. the alphanumeric string after <code className="bg-darkbg px-1.5 py-0.5 rounded font-mono">/folders/...</code>).</li>
-                  <li>Paste the ID into your server folder’s <code className="bg-darkbg px-1.5 py-0.5 rounded font-mono">.env</code> as <code className="text-primary font-mono font-medium">GOOGLE_DRIVE_FOLDER_ID</code>.</li>
-                  <li>Click <strong>Connect Google Account</strong> to grant read-only permissions and sync.</li>
-                </ol>
-                <div className="bg-primary/5 p-3 rounded-lg border border-primary/10 mt-4">
-                  <p className="font-semibold text-primary mb-1">💡 Professional Naming Tip:</p>
-                  Name files on Google Drive using the format: <code className="bg-darkbg/50 px-1 py-0.5 rounded text-lighttext font-mono">Category - Title.jpg</code> (e.g., <code className="text-primary font-mono">Sadya - Feast Spread.jpg</code>). The website will automatically parse this to organize your gallery tabs!
-                </div>
-              </div>
-
-              <div className="flex flex-col justify-between space-y-4">
-                <div className="space-y-3 bg-darkbg/40 p-4 rounded-xl border border-white/5 text-xs">
-                  <h4 className="font-bold text-lighttext text-sm border-b border-white/5 pb-2">Sync Information</h4>
-                  <div className="grid grid-cols-3 gap-2">
-                    <span className="text-lighttext/55">Status:</span>
-                    <span className="col-span-2 font-semibold">
-                      {isDriveConnected ? (
-                        <span className="text-green-400 flex items-center gap-1">Connected</span>
-                      ) : (
-                        <span className="text-yellow-400 flex items-center gap-1">Offline (Fallback Mode)</span>
-                      )}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <span className="text-lighttext/55">Folder ID:</span>
-                    <span className="col-span-2 font-mono text-[10px] break-all text-lighttext/80">
-                      {isDriveConnected ? 'Configured' : 'Not Configured (Using Mock Data)'}
-                    </span>
-                  </div>
-                  {syncError && (
-                    <div className="mt-3 p-3 bg-red-950/40 border border-red-500/20 text-red-400 rounded-lg flex gap-2">
-                      <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-                      <p className="leading-normal">{syncError}</p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <a
-                    href={`${API_BASE}/api/auth/google`}
-                    className="flex-grow text-center px-5 py-3 bg-primary text-darkbg hover:bg-primary/90 font-bold text-xs rounded-xl shadow-lg hover:shadow-primary/10 transition-all uppercase tracking-wider flex items-center justify-center gap-2"
-                  >
-                    Connect Google Account
-                  </a>
-                  {isDriveConnected && (
-                    <a 
-                      href={images[0]?.driveUrl || 'https://drive.google.com'} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="px-4 py-3 border border-white/10 hover:border-primary/50 text-lighttext/80 hover:text-primary rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
-                    >
-                      Open Drive <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Dynamic Category Filtering */}
-        {categories.length > 2 && (
-          <div className="flex flex-wrap gap-2.5 mb-10 justify-start relative z-20">
+        {/* ================= CONTROL & FILTER BAR ================= */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-6 border-b border-white/10 gap-4">
+          
+          {/* Category Chips */}
+          <div className="flex flex-wrap gap-2 justify-start items-center">
             {categories.map(cat => (
               <button
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${
+                onClick={() => {
+                  setActiveCategory(cat);
+                  setSelectedIndex(null);
+                }}
+                className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${
                   activeCategory === cat
-                    ? 'bg-primary text-darkbg border-primary shadow-[0_0_15px_rgba(212,175,55,0.3)]'
+                    ? 'stitch-chip-active border-primary scale-105'
                     : 'bg-secondary/40 hover:bg-secondary/70 text-lighttext/80 hover:text-lighttext border-white/10'
                 }`}
               >
@@ -226,85 +207,224 @@ const Gallery = () => {
               </button>
             ))}
           </div>
-        )}
 
-        {/* Loading State */}
+          {/* Search Bar */}
+          <div className="w-full md:w-auto">
+            <div className="relative w-full md:w-64">
+              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-lighttext/40">
+                <Search className="w-4 h-4" />
+              </span>
+              <input
+                type="text"
+                placeholder="Search photos..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-8 py-2 bg-secondary/60 border border-primary/25 text-lighttext rounded-full focus:outline-none focus:ring-2 focus:ring-primary/60 text-xs transition-all placeholder:text-lighttext/40"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-xs text-lighttext/50 hover:text-primary"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
+
+        </div>
+
+        {/* ================= GALLERY IMAGES GRID ================= */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-24 gap-4">
+          <div className="flex flex-col items-center justify-center py-28 gap-4">
             <RefreshCw className="w-10 h-10 text-primary animate-spin" />
-            <p className="text-lighttext/50 text-xs tracking-widest uppercase">Loading Gallery Photos...</p>
+            <p className="text-lighttext/50 text-xs tracking-widest uppercase">Loading Gallery Collection...</p>
+          </div>
+        ) : filteredImages.length === 0 ? (
+          <div className="text-center py-24 stitch-card rounded-3xl">
+            <ImageIcon className="w-12 h-12 text-primary/40 mx-auto mb-3" />
+            <h3 className="text-lg font-serif font-bold text-lighttext mb-1">No images found</h3>
+            <p className="text-xs text-lighttext/50">Try clearing search or picking another category filter.</p>
+            <button
+              onClick={() => { setActiveCategory('All'); setSearchQuery(''); }}
+              className="mt-4 px-5 py-2.5 bg-primary text-darkbg rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all"
+            >
+              Reset Filters
+            </button>
           </div>
         ) : (
-          <>
-            {/* 4-Column Grid with Square Images */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-fade-in">
-              {filteredImages.map(item => (
-                <div 
-                  key={item.id} 
-                  className="relative overflow-hidden cursor-pointer group aspect-square border border-white/5 shadow-lg bg-secondary/20 rounded-lg"
-                  onClick={() => setSelectedImage(item.proxyFullImage || item.fullImage || item.proxyImage || item.image)}
-                >
-                  <img 
-                    src={item.proxyImage || item.image} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    onError={(e) => {
-                      if (item.image && e.target.src !== item.image && !e.target.dataset.triedOriginal) {
-                        e.target.dataset.triedOriginal = "true";
-                        e.target.src = item.image;
-                      } else if (!e.target.dataset.triedFallback) {
-                        e.target.dataset.triedFallback = "true";
-                        e.target.src = "/images/sadya.jpeg";
-                      }
-                    }}
-                  />
-                  {/* Elegant overlay on hover */}
-                  <div className="absolute inset-0 bg-darkbg/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 text-center">
-                    <span className="text-primary text-[10px] uppercase tracking-[0.2em] mb-2 font-sans font-semibold">
-                      {item.category}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            {filteredImages.map((item, index) => (
+              <div 
+                key={item.id || index}
+                className="stitch-card rounded-2xl overflow-hidden relative group aspect-square cursor-pointer border border-white/10"
+                onClick={() => setSelectedIndex(index)}
+              >
+                <img 
+                  src={item.proxyImage || item.image} 
+                  alt={item.title || 'Krishna Caterers Event'} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  onError={(e) => {
+                    if (item.image && e.target.src !== item.image && !e.target.dataset.triedOriginal) {
+                      e.target.dataset.triedOriginal = "true";
+                      e.target.src = item.image;
+                    } else if (!e.target.dataset.triedFallback) {
+                      e.target.dataset.triedFallback = "true";
+                      e.target.src = "/images/sadya.jpeg";
+                    }
+                  }}
+                />
+                
+                {/* Stitch Hover Card Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-darkbg/95 via-darkbg/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-between p-5 text-left">
+                  <div className="flex justify-between items-start">
+                    <span className="bg-primary text-darkbg text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-md">
+                      {item.category || 'Sadya'}
                     </span>
-                    <h3 className="text-lighttext text-base font-bold font-serif px-2 leading-snug">
+                    <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-lighttext hover:text-primary transition-colors">
+                      <Maximize2 className="w-4 h-4" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lighttext font-serif font-bold text-base sm:text-lg leading-snug mb-1">
                       {item.title}
                     </h3>
-                    <span className="text-[9px] text-lighttext/50 mt-4 tracking-widest uppercase border-b border-primary/45 pb-0.5">
-                      View Frame
-                    </span>
+                    <p className="text-primary text-[10px] uppercase font-bold tracking-widest flex items-center gap-1">
+                      <span>Click to view full photo</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Empty State */}
-            {filteredImages.length === 0 && (
-              <div className="text-center py-20 border border-white/5 rounded-2xl bg-secondary/5">
-                <p className="text-lighttext/40 text-sm">No images found for category "{activeCategory}".</p>
               </div>
-            )}
-          </>
-        )}
-
-        {/* Lightbox Modal */}
-        {selectedImage && (
-          <div 
-            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm transition-all duration-300" 
-            onClick={() => setSelectedImage(null)}
-          >
-            <div className="relative max-w-5xl max-h-[90vh] overflow-hidden">
-              <img 
-                src={selectedImage} 
-                alt="Fullscreen View" 
-                className="max-w-full max-h-[85vh] object-contain shadow-2xl border border-white/10 rounded-lg"
-                onError={(e) => {
-                  e.target.src = "/images/sadya.jpeg";
-                }}
-              />
-            </div>
-            <button className="absolute top-6 right-6 text-lighttext hover:text-primary text-4xl font-light transition-colors duration-200">&times;</button>
+            ))}
           </div>
         )}
+
+        {/* ================= INSTAGRAM & BOOKING FOOTER BANNER ================= */}
+        <div className="mt-16 stitch-card p-8 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="text-center md:text-left">
+            <span className="text-xs text-primary font-bold uppercase tracking-widest block mb-1">
+              Want to see more live event stories?
+            </span>
+            <h3 className="text-2xl font-serif font-bold text-lighttext mb-1">
+              Follow Us on Instagram & Facebook
+            </h3>
+            <p className="text-xs text-lighttext/60 font-light">
+              Catch behind-the-scenes videos of our traditional Sadya kitchens, live buffet counters, and client testimonials.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <a 
+              href={siteConfig.social.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 rounded-xl border border-white/15 hover:border-primary text-lighttext hover:text-primary bg-white/5 transition-all text-xs font-bold uppercase tracking-wider flex items-center gap-2"
+            >
+              <Instagram className="w-4 h-4" /> Instagram
+            </a>
+            <Link
+              to="/contact"
+              className="px-6 py-3 rounded-xl bg-primary text-darkbg font-bold text-xs uppercase tracking-wider hover:bg-primary/95 shadow-lg transition-all flex items-center gap-2"
+            >
+              <Sparkles className="w-4 h-4" /> Book Your Event
+            </Link>
+          </div>
+        </div>
+
       </div>
+
+      {/* ================= STITCH LIGHTBOX MODAL WITH NEXT/PREV CONTROLS ================= */}
+      {selectedItem && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8 transition-all animate-stitch-up"
+          onClick={() => setSelectedIndex(null)}
+        >
+          {/* Top Control Bar */}
+          <div 
+            className="absolute top-4 inset-x-4 sm:inset-x-8 flex items-center justify-between z-20"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="bg-secondary/80 backdrop-blur-md border border-white/10 px-4 py-1.5 rounded-full text-xs font-bold text-lighttext/80 flex items-center gap-2">
+              <span className="text-primary font-serif font-bold">{selectedItem.category || 'Gallery'}</span>
+              <span className="text-lighttext/30">•</span>
+              <span>Photo {selectedIndex + 1} of {filteredImages.length}</span>
+            </div>
+
+            <button
+              onClick={() => setSelectedIndex(null)}
+              className="p-2.5 rounded-full bg-secondary/80 border border-white/15 text-lighttext hover:text-primary hover:bg-darkbg transition-all"
+              aria-label="Close Lightbox"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Previous Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handlePrevImage();
+            }}
+            className="absolute left-3 sm:left-6 z-20 p-3 rounded-full bg-secondary/70 border border-white/15 text-lighttext hover:text-primary hover:bg-darkbg hover:scale-110 transition-all shadow-2xl"
+            aria-label="Previous Image"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+
+          {/* Image & Title Frame */}
+          <div 
+            className="relative max-w-5xl max-h-[82vh] flex flex-col items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img 
+              src={selectedItem.proxyFullImage || selectedItem.fullImage || selectedItem.proxyImage || selectedItem.image} 
+              alt={selectedItem.title || 'Krishna Caterers Event Photo'} 
+              className="max-w-full max-h-[72vh] object-contain rounded-2xl border border-white/10 shadow-2xl"
+              onError={(e) => {
+                e.target.src = "/images/sadya.jpeg";
+              }}
+            />
+
+            {/* Bottom Caption & CTA */}
+            <div className="mt-4 text-center max-w-xl bg-secondary/70 backdrop-blur-md border border-primary/20 p-4 rounded-2xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
+              <div className="text-left">
+                <span className="text-[10px] uppercase font-bold text-primary tracking-widest block">
+                  {selectedItem.category || 'Kerala Sadya'}
+                </span>
+                <h3 className="text-lg font-serif font-bold text-lighttext">
+                  {selectedItem.title}
+                </h3>
+              </div>
+              <Link
+                to="/contact"
+                onClick={() => setSelectedIndex(null)}
+                className="px-5 py-2.5 bg-primary text-darkbg font-bold rounded-xl text-xs uppercase tracking-wider hover:bg-primary/95 transition-all shrink-0 flex items-center gap-1.5 shadow-md"
+              >
+                <span>Book This Style</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Next Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleNextImage();
+            }}
+            className="absolute right-3 sm:right-6 z-20 p-3 rounded-full bg-secondary/70 border border-white/15 text-lighttext hover:text-primary hover:bg-darkbg hover:scale-110 transition-all shadow-2xl"
+            aria-label="Next Image"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+
+        </div>
+      )}
     </div>
   );
 };
 
 export default Gallery;
+
