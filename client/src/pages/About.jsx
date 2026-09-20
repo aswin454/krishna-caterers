@@ -1,9 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Gem, Leaf, Palette, ArrowRight } from 'lucide-react';
+import { 
+  Gem, Leaf, Palette, ArrowRight, ShieldCheck, Star, 
+  Award, Heart, Users, Utensils, CheckCircle2, Sparkles, ChefHat 
+} from 'lucide-react';
 import { siteConfig } from '../data/siteConfig';
 import LightRays from '../components/LightRays';
 import ScrollExpand from '../components/ScrollExpand';
+import GridMotionBackground from '../components/GridMotionBackground';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -13,42 +17,49 @@ const milestones = [
   {
     year: "2000",
     title: "Humble Beginnings",
-    desc: "Inspired by generations of family recipes, we bring authentic flavours to your table with fresh ingredients, refined presentation, and a passion for exceptional food. Crafted with tradition. Served with elegance.",
+    desc: "Inspired by generations of traditional Kerala recipes, we began our journey serving authentic vegetarian feasts prepared with pure coconut oil, hand-ground spices, and absolute dedication to tradition.",
     image: "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   },
   {
     year: "2010",
-    title: "Milestone Reached",
-    desc: "Completed 1000+ events.",
+    title: "1000+ Celebrations Milestone",
+    desc: "Crossed 1,000 successful catering functions across Ernakulam and central Kerala, gaining a reputation for uncompromised Sadya quality and gracious hospitality.",
     image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   },
   {
     year: "2015",
     title: "Expanding Horizons",
-    desc: "Our reputation for uncompromising quality grew, allowing us to cater larger gatherings and refine our culinary techniques.",
+    desc: "Expanded our infrastructure with state-of-the-art kitchen facilities and dedicated banqueting staff while preserving our 100% pure vegetarian promise.",
     image: "https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   },
   {
     year: "2018",
-    title: "A Shift to Luxury",
-    desc: "Elevated our presentation and service to curate high-end culinary experiences, becoming a preferred choice for premium weddings.",
+    title: "A Shift to Luxury Weddings",
+    desc: "Elevated our presentation with custom dining setups, artisanal payasam stalls, and premium banana leaf service for grand luxury weddings.",
     image: "https://images.unsplash.com/photo-1533777324565-a040eb52facd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   },
   {
     year: "2022",
-    title: "Award Winning",
-    desc: "Emerging Catering Award.",
+    title: "Award-Winning Excellence",
+    desc: "Honored with Regional Culinary Excellence recognition for preserving Kerala's traditional vegetarian Sadya heritage and innovative buffet designs.",
     image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   },
   {
     year: "Today",
-    title: "Artisanal Excellence",
-    desc: "Over 250+ vegetarian luxury events catered. We continue to innovate while maintaining our 100% pure vegetarian promise and award-winning craft.",
+    title: "Artisanal Mastery",
+    desc: "Over 25+ years of tradition and thousands of joyous celebrations. We continue to innovate our menu offerings while serving every guest like family.",
     image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   }
 ];
 
-const bgPattern = `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd' fill-opacity='0.04'%3E%3Cg fill='%23d4af37'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`;
+const stats = [
+  { label: "Years of Culinary Heritage", value: "25+", icon: Award },
+  { label: "Events & Sadyas Catered", value: "1,200+", icon: Users },
+  { label: "Pure Vegetarian Recipes", value: "100%", icon: Leaf },
+  { label: "Client Satisfaction Rating", value: "4.9 ★", icon: Star }
+];
+
+const bgPattern = `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd' fill-opacity='0.05'%3E%3Cg fill='%23d4af37'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`;
 
 const About = () => {
   const containerRef = useRef(null);
@@ -138,90 +149,168 @@ const About = () => {
   }, []);
 
   return (
-    <div className="relative bg-darkbg min-h-screen font-sans text-center overflow-hidden" ref={containerRef}>
-      {/* Decorative Background Elements */}
+    <div className="relative bg-darkbg min-h-screen font-sans text-center overflow-hidden selection:bg-primary selection:text-darkbg" ref={containerRef}>
+      {/* Google Stitch Custom Keyframe Styles */}
+      <style>{`
+        @keyframes stitchPulse {
+          0%, 100% { opacity: 0.2; transform: scale(1); }
+          50% { opacity: 0.35; transform: scale(1.08); }
+        }
+        .stitch-card {
+          background: rgba(20, 54, 37, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(212, 175, 55, 0.2);
+          transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .stitch-card:hover {
+          border-color: rgba(255, 224, 102, 0.5);
+          transform: translateY(-3px);
+          box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 25px -5px rgba(212, 175, 55, 0.18);
+        }
+        .animate-stitch-pulse {
+          animation: stitchPulse 7.5s ease-in-out infinite;
+        }
+      `}</style>
+
+      {/* React Bits Bright Motion Canvas & Lighting Layer */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute inset-0" style={{ backgroundImage: bgPattern, backgroundSize: '60px 60px' }}></div>
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2"></div>
-        <div className="absolute inset-0 opacity-50 pointer-events-none">
+        {/* React Bits Canvas Particles */}
+        <GridMotionBackground
+          particleColor="#ffe066"
+          lineColor="rgba(255, 224, 102, 0.35)"
+          particleCount={75}
+          speed={0.55}
+          interactive={true}
+        />
+
+        {/* WebGL Light Rays */}
+        <div className="absolute inset-0 opacity-40">
           <LightRays
             raysOrigin="top-center"
-            raysColor="#d4af37"
-            raysSpeed={1.2}
-            lightSpread={0.8}
+            raysColor="#ffd700"
+            raysSpeed={0.8}
+            lightSpread={1.4}
             rayLength={1.8}
             followMouse={true}
             mouseInfluence={0.15}
-            noiseAmount={0.05}
-            distortion={0.05}
           />
         </div>
+
+        {/* Geometric Background Pattern */}
+        <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: bgPattern, backgroundSize: '60px 60px' }}></div>
+        
+        {/* Glowing Ambient Light Orbs */}
+        <div className="absolute top-10 left-10 w-[600px] h-[600px] bg-primary/20 rounded-full filter blur-[150px] animate-stitch-pulse"></div>
+        <div className="absolute bottom-10 right-10 w-[650px] h-[650px] bg-secondary/60 rounded-full filter blur-[160px] animate-stitch-pulse" style={{ animationDelay: '-3.5s' }}></div>
       </div>
 
-      <div className="relative z-10 pt-32 pb-24 w-full max-w-7xl mx-auto px-4 md:px-8">
+      <div className="relative z-10 pt-28 md:pt-36 pb-24 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section 1: Hero Intro */}
-        <div className="max-w-3xl mx-auto mb-16">
-          <h1 className="hero-intro text-4xl md:text-5xl lg:text-6xl font-serif text-primary mb-6">
-            Our Journey to Artisanal Excellence
+        <div className="max-w-3xl mx-auto mb-16 text-center">
+          
+          {/* Status Badge Pills */}
+          <div className="hero-intro inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 bg-secondary/70 backdrop-blur-md border border-primary/30 px-4 py-1.5 rounded-full mb-6 text-xs font-medium shadow-lg">
+            <span className="flex items-center gap-1.5 text-primary font-bold">
+              <Star className="w-4 h-4 fill-primary text-primary" /> 4.9 Rating
+            </span>
+            <span className="text-lighttext/30">•</span>
+            <span className="text-lighttext/80 flex items-center gap-1">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" /> 100% Pure Veg Sadya
+            </span>
+            <span className="text-lighttext/30">•</span>
+            <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              25+ Years Legacy
+            </span>
+          </div>
+
+          <h1 className="hero-intro text-3xl sm:text-5xl lg:text-6xl font-serif font-bold text-lighttext leading-[1.15] mb-6">
+            Our Journey to <br />
+            <span className="text-primary italic font-serif">Artisanal Excellence</span>
           </h1>
-          <p className="hero-intro text-sm md:text-base text-lighttext/80 leading-relaxed font-light">
-            We are {siteConfig.businessName}, a high-end culinary studio dedicated to redefining luxury vegetarian catering. Born from a desire to elevate plant-based cuisine to an art form.
+
+          <p className="hero-intro text-base sm:text-lg text-lighttext/80 leading-relaxed font-light max-w-2xl mx-auto">
+            We are <strong className="text-primary">{siteConfig.businessName}</strong>, a premier traditional catering house dedicated to elevating Kerala's authentic vegetarian cuisine into an extraordinary celebration of taste.
           </p>
         </div>
 
         {/* Hero Image with ScrollExpand */}
-        <div className="hero-intro w-full h-[450px] md:h-[650px] rounded-2xl overflow-hidden mb-32 relative shadow-2xl">
+        <div className="hero-intro w-full h-[400px] md:h-[600px] rounded-3xl overflow-hidden mb-24 relative shadow-2xl border border-primary/20">
           <ScrollExpand
             src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
             alt="Chef preparing fine dining"
             title="Artisanal Mastery"
             scrollHint="Scroll to expand view"
             useWindowScroll={true}
-            startWidth={70}
-            startHeight={75}
-            startRadius={20}
+            startWidth={75}
+            startHeight={78}
+            startRadius={24}
             endRadius={0}
-            mediaZoom={1.3}
+            mediaZoom={1.25}
             scrollDistance={0.8}
             holdDistance={0.2}
             overlayScrim={0.85}
           >
             <div className="max-w-3xl text-center px-4">
-              <h2 className="text-2xl md:text-5xl font-serif text-primary mb-4 font-bold tracking-wide drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
+              <div className="inline-flex items-center gap-2 bg-primary text-darkbg px-3.5 py-1 rounded-full font-bold text-xs uppercase tracking-wider mb-4 shadow-lg">
+                <ChefHat className="w-4 h-4" /> Traditional Master Chefs
+              </div>
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif text-primary mb-4 font-bold tracking-wide drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
                 Crafted with Tradition. Served with Elegance.
               </h2>
-              <p className="text-sm md:text-lg text-lighttext/90 max-w-xl mx-auto font-light leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-                Every event we cater is a symphony of authentic Kerala flavours, pristine organic ingredients, and immaculate presentation.
+              <p className="text-sm sm:text-lg text-lighttext/90 max-w-xl mx-auto font-light leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                Every event we cater is a symphony of authentic Kerala flavours, handpicked spices, pure coconut oil, and immaculate banana leaf presentation.
               </p>
             </div>
           </ScrollExpand>
         </div>
 
+        {/* Stats & Achievements Highlights Bar */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-28">
+          {stats.map((item, idx) => {
+            const IconComponent = item.icon;
+            return (
+              <div key={idx} className="stitch-card p-6 rounded-3xl text-center relative group">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center mx-auto mb-3 text-primary group-hover:scale-110 transition-transform">
+                  <IconComponent className="w-6 h-6" />
+                </div>
+                <h3 className="text-3xl sm:text-4xl font-serif font-bold text-primary mb-1">{item.value}</h3>
+                <p className="text-xs text-lighttext/70 font-light">{item.label}</p>
+              </div>
+            );
+          })}
+        </div>
+
         {/* Section 2: Scrolly Curved Timeline */}
-        <div className="relative max-w-5xl mx-auto py-10 mb-32" ref={timelineRef}>
-          <div className="text-center mb-24">
-            <h2 className="text-3xl md:text-4xl font-serif text-primary mb-6">The Path We Traveled</h2>
-            <p className="text-sm md:text-base text-lighttext/70 font-light">The evolution of our passion for flavor.</p>
+        <div className="relative max-w-5xl mx-auto py-10 mb-28" ref={timelineRef}>
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest mb-2">
+              <Sparkles className="w-4 h-4" /> Our Legacy
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-serif font-bold text-lighttext mb-4">
+              The Path We Traveled
+            </h2>
+            <p className="text-sm sm:text-base text-lighttext/70 font-light max-w-xl mx-auto">
+              How decades of passion, family recipes, and commitment shaped Krishna Caterers into a household name.
+            </p>
           </div>
 
           <div className="relative">
             {/* Desktop SVG Curve */}
             <div className="hidden sm:block absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-[150px] pointer-events-none">
               <svg viewBox="0 0 100 1200" preserveAspectRatio="none" className="w-full h-full">
-                {/* Faint Background Path */}
-                <path d="M 50 0 C 50 40, 100 60, 100 100 C 100 180, 0 220, 0 300 C 0 380, 100 420, 100 500 C 100 580, 0 620, 0 700 C 0 780, 100 820, 100 900 C 100 980, 0 1020, 0 1100 C 0 1140, 50 1160, 50 1200" fill="none" stroke="#d4af37" strokeWidth="1" strokeDasharray="4 4" className="opacity-20" />
-                {/* Animated Foreground Path */}
-                <path ref={pathRef} d="M 50 0 C 50 40, 100 60, 100 100 C 100 180, 0 220, 0 300 C 0 380, 100 420, 100 500 C 100 580, 0 620, 0 700 C 0 780, 100 820, 100 900 C 100 980, 0 1020, 0 1100 C 0 1140, 50 1160, 50 1200" fill="none" stroke="#d4af37" strokeWidth="4" />
+                <path d="M 50 0 C 50 40, 100 60, 100 100 C 100 180, 0 220, 0 300 C 0 380, 100 420, 100 500 C 100 580, 0 620, 0 700 C 0 780, 100 820, 100 900 C 100 980, 0 1020, 0 1100 C 0 1140, 50 1160, 50 1200" fill="none" stroke="#d4af37" strokeWidth="1" strokeDasharray="4 4" className="opacity-25" />
+                <path ref={pathRef} d="M 50 0 C 50 40, 100 60, 100 100 C 100 180, 0 220, 0 300 C 0 380, 100 420, 100 500 C 100 580, 0 620, 0 700 C 0 780, 100 820, 100 900 C 100 980, 0 1020, 0 1100 C 0 1140, 50 1160, 50 1200" fill="none" stroke="#ffd700" strokeWidth="4" />
               </svg>
             </div>
 
-            {/* Mobile Straight Vertical Line (passing perfectly through center of mobile dots) */}
+            {/* Mobile Vertical Line */}
             <div className="sm:hidden absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-[2px] pointer-events-none z-10">
               <svg viewBox="0 0 2 1200" preserveAspectRatio="none" className="w-full h-full overflow-visible">
                 <line x1="1" y1="0" x2="1" y2="1200" stroke="#d4af37" strokeWidth="2" strokeDasharray="4 4" className="opacity-25" />
-                <path ref={mobilePathRef} d="M 1 0 L 1 1200" fill="none" stroke="#d4af37" strokeWidth="3" />
+                <path ref={mobilePathRef} d="M 1 0 L 1 1200" fill="none" stroke="#ffd700" strokeWidth="3" />
               </svg>
             </div>
 
@@ -230,18 +319,18 @@ const About = () => {
               {milestones.map((m, idx) => {
                 const isEven = idx % 2 === 0;
                 return (
-                  <div key={idx} className="relative sm:h-[300px] flex items-center w-full justify-center">
+                  <div key={idx} className="relative sm:h-[320px] flex items-center w-full justify-center">
 
                     {/* Mobile Layout (Stack) */}
                     <div className="sm:hidden flex flex-col items-center w-full relative z-10 pt-6">
-                      <div className="milestone-dot absolute top-0 left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full bg-darkbg border-[4px] border-primary shadow-[0_0_15px_rgba(212,175,55,0.8)] z-20"></div>
-                      <div className="milestone-content flex flex-col items-center text-center bg-secondary/40 backdrop-blur-sm p-6 border border-white/5 rounded-2xl w-full mt-4">
-                        <div className="w-full h-48 rounded-lg overflow-hidden mb-6">
-                          <img src={m.image} alt={m.title} className="w-full h-full object-cover filter brightness-75" />
+                      <div className="milestone-dot absolute top-0 left-1/2 transform -translate-x-1/2 w-7 h-7 rounded-full bg-darkbg border-[4px] border-primary shadow-[0_0_20px_rgba(255,215,0,0.9)] z-20"></div>
+                      <div className="milestone-content flex flex-col items-center text-center stitch-card p-6 rounded-3xl w-full mt-4 text-left">
+                        <div className="w-full h-48 rounded-2xl overflow-hidden mb-4 border border-white/10">
+                          <img src={m.image} alt={m.title} className="w-full h-full object-cover filter brightness-90" />
                         </div>
-                        <span className="text-3xl font-serif text-primary mb-2 block">{m.year}</span>
-                        <h3 className="text-lg font-bold text-lighttext mb-4">{m.title}</h3>
-                        <p className="text-sm text-lighttext/70">{m.desc}</p>
+                        <span className="text-3xl font-serif font-bold text-primary mb-1 block">{m.year}</span>
+                        <h3 className="text-lg font-bold text-lighttext mb-2">{m.title}</h3>
+                        <p className="text-xs text-lighttext/70 leading-relaxed font-light">{m.desc}</p>
                       </div>
                     </div>
 
@@ -251,21 +340,21 @@ const About = () => {
                       {/* Left Side Container */}
                       <div className={`w-[42%] milestone-content ${isEven ? 'text-right' : 'text-left'}`}>
                         {isEven ? (
-                          <>
-                            <span className="text-4xl lg:text-5xl font-serif text-primary mb-4 block">{m.year}</span>
-                            <h3 className="text-xl font-bold text-lighttext mb-4">{m.title}</h3>
-                            <p className="text-sm text-lighttext/70 leading-relaxed">{m.desc}</p>
-                          </>
+                          <div className="stitch-card p-6 rounded-3xl text-right">
+                            <span className="text-4xl lg:text-5xl font-serif font-bold text-primary mb-2 block">{m.year}</span>
+                            <h3 className="text-xl font-bold text-lighttext mb-3">{m.title}</h3>
+                            <p className="text-xs sm:text-sm text-lighttext/70 leading-relaxed font-light">{m.desc}</p>
+                          </div>
                         ) : (
-                          <div className="w-full h-[220px] rounded-lg overflow-hidden border border-white/5 shadow-2xl">
-                            <img src={m.image} alt={m.title} className="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-500 hover:scale-105" />
+                          <div className="w-full h-[230px] rounded-3xl overflow-hidden border border-primary/20 shadow-2xl group">
+                            <img src={m.image} alt={m.title} className="w-full h-full object-cover filter brightness-90 group-hover:scale-108 transition-transform duration-700" />
                           </div>
                         )}
                       </div>
 
                       {/* Center Node (Dot) */}
                       <div
-                        className="milestone-dot absolute top-1/2 z-10 w-5 h-5 rounded-full bg-darkbg border-[3px] border-primary shadow-[0_0_20px_rgba(212,175,55,0.6)]"
+                        className="milestone-dot absolute top-1/2 z-10 w-6 h-6 rounded-full bg-darkbg border-[4px] border-primary shadow-[0_0_25px_rgba(255,215,0,0.9)]"
                         style={{
                           left: `calc(50% ${isEven ? '+' : '-'} 75px)`,
                           transform: 'translate(-50%, -50%)'
@@ -275,14 +364,14 @@ const About = () => {
                       {/* Right Side Container */}
                       <div className={`w-[42%] milestone-content ${!isEven ? 'text-left' : 'text-right'}`}>
                         {!isEven ? (
-                          <>
-                            <span className="text-4xl lg:text-5xl font-serif text-primary mb-4 block">{m.year}</span>
-                            <h3 className="text-xl font-bold text-lighttext mb-4">{m.title}</h3>
-                            <p className="text-sm text-lighttext/70 leading-relaxed">{m.desc}</p>
-                          </>
+                          <div className="stitch-card p-6 rounded-3xl text-left">
+                            <span className="text-4xl lg:text-5xl font-serif font-bold text-primary mb-2 block">{m.year}</span>
+                            <h3 className="text-xl font-bold text-lighttext mb-3">{m.title}</h3>
+                            <p className="text-xs sm:text-sm text-lighttext/70 leading-relaxed font-light">{m.desc}</p>
+                          </div>
                         ) : (
-                          <div className="w-full h-[220px] rounded-lg overflow-hidden border border-white/5 shadow-2xl">
-                            <img src={m.image} alt={m.title} className="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-500 hover:scale-105" />
+                          <div className="w-full h-[230px] rounded-3xl overflow-hidden border border-primary/20 shadow-2xl group">
+                            <img src={m.image} alt={m.title} className="w-full h-full object-cover filter brightness-90 group-hover:scale-108 transition-transform duration-700" />
                           </div>
                         )}
                       </div>
@@ -296,46 +385,77 @@ const About = () => {
         </div>
 
         {/* Section 3: Our Pillars */}
-        <div className="pillar-section mb-32 border-t border-white/5 pt-20">
-          <div className="pillar-header mb-12">
-            <h2 className="text-2xl md:text-3xl font-serif text-primary mb-3">Our Pillars</h2>
-            <p className="text-xs md:text-sm text-lighttext/60 font-light">The principles that guide our culinary craft.</p>
+        <div className="pillar-section mb-24 border-t border-white/10 pt-20">
+          <div className="pillar-header mb-12 text-center">
+            <div className="inline-flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest mb-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" /> Our Core Values
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-lighttext mb-3">Our Culinary Pillars</h2>
+            <p className="text-xs sm:text-sm text-lighttext/60 font-light max-w-xl mx-auto">The unshakeable principles that guide every dish we cook and every event we serve.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {/* Pillar 1 */}
-            <div className="pillar-card bg-secondary/40 border border-white/5 p-8 text-left group hover:bg-secondary/60 transition-colors duration-300 rounded-sm">
-              <Gem className="w-5 h-5 text-primary mb-6 transform group-hover:scale-110 transition-transform duration-300" />
-              <h3 className="text-lg font-serif text-lighttext mb-4">Authenticity</h3>
-              <p className="text-[11px] md:text-xs text-lighttext/60 font-light leading-relaxed">
-                Uncompromising dedication to original recipes, preserving the soul of traditional flavors while presenting them with contemporary elegance.
+            <div className="pillar-card stitch-card p-8 text-left rounded-3xl group">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
+                <Gem className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-lighttext mb-3 group-hover:text-primary transition-colors">Authenticity</h3>
+              <p className="text-xs sm:text-sm text-lighttext/70 font-light leading-relaxed">
+                Uncompromising dedication to original Kerala recipes, preserving the rich heritage of traditional Sadya curries, payasams, and starters.
               </p>
             </div>
+
             {/* Pillar 2 */}
-            <div className="pillar-card bg-secondary/40 border border-white/5 p-8 text-left group hover:bg-secondary/60 transition-colors duration-300 rounded-sm">
-              <Leaf className="w-5 h-5 text-primary mb-6 transform group-hover:scale-110 transition-transform duration-300" />
-              <h3 className="text-lg font-serif text-lighttext mb-4">Purity</h3>
-              <p className="text-[11px] md:text-xs text-lighttext/60 font-light leading-relaxed">
-                Sourcing only the finest, organic, and ethically grown ingredients. Our commitment to pristine quality is the foundation of every dish.
+            <div className="pillar-card stitch-card p-8 text-left rounded-3xl group">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-6 text-emerald-400 group-hover:scale-110 transition-transform">
+                <Leaf className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-lighttext mb-3 group-hover:text-emerald-400 transition-colors">Purity Guarantee</h3>
+              <p className="text-xs sm:text-sm text-lighttext/70 font-light leading-relaxed">
+                100% strictly pure vegetarian kitchen using fresh coconut oil, hand-ground spices, and ethically sourced organic ingredients.
               </p>
             </div>
+
             {/* Pillar 3 */}
-            <div className="pillar-card bg-secondary/40 border border-white/5 p-8 text-left group hover:bg-secondary/60 transition-colors duration-300 rounded-sm">
-              <Palette className="w-5 h-5 text-primary mb-6 transform group-hover:scale-110 transition-transform duration-300" />
-              <h3 className="text-lg font-serif text-lighttext mb-4">Craft</h3>
-              <p className="text-[11px] md:text-xs text-lighttext/60 font-light leading-relaxed">
-                Meticulous attention to detail in preparation and presentation. Every plate is considered a masterpiece of culinary architecture.
+            <div className="pillar-card stitch-card p-8 text-left rounded-3xl group">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
+                <Palette className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-lighttext mb-3 group-hover:text-primary transition-colors">Craft & Presentation</h3>
+              <p className="text-xs sm:text-sm text-lighttext/70 font-light leading-relaxed">
+                Meticulous attention to detail from traditional banana leaf dining table arrangements to modern, elegant buffet counters.
               </p>
             </div>
           </div>
         </div>
 
         {/* Section 4: CTA */}
-        <div className="cta-section pb-12 text-center">
-          <h2 className="text-2xl md:text-3xl font-serif text-primary mb-8">Ready to curate your next experience?</h2>
-          <Link to="/contact" className="inline-block px-8 py-3.5 bg-primary text-darkbg font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-lighttext transition-colors duration-300 hover:-translate-y-1 transform">
-            Start Your Flavor Journey
-          </Link>
+        <div className="cta-section stitch-card p-10 rounded-3xl text-center max-w-4xl mx-auto shadow-2xl">
+          <div className="inline-flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest mb-3">
+            <Sparkles className="w-4 h-4" /> Start Planning
+          </div>
+          <h2 className="text-2xl sm:text-4xl font-serif font-bold text-lighttext mb-4">
+            Ready to Curate Your Unforgettable Feast?
+          </h2>
+          <p className="text-xs sm:text-base text-lighttext/70 font-light max-w-lg mx-auto mb-8 leading-relaxed">
+            Let our master chefs craft a custom vegetarian menu tailored to your family tradition, guest count, and event vision.
+          </p>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Link 
+              to="/contact" 
+              className="px-8 py-3.5 bg-primary text-darkbg font-bold rounded-xl text-xs uppercase tracking-wider hover:bg-primary/95 transition-all shadow-xl flex items-center gap-2"
+            >
+              <span>Request Catering Quote</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <a 
+              href={`tel:${siteConfig.contact.phone}`}
+              className="px-8 py-3.5 border border-white/15 hover:border-primary text-lighttext hover:text-primary font-bold rounded-xl text-xs uppercase tracking-wider transition-all bg-white/5 flex items-center gap-2"
+            >
+              <span>Call Our Team</span>
+            </a>
+          </div>
         </div>
 
       </div>
@@ -344,3 +464,4 @@ const About = () => {
 };
 
 export default About;
+
