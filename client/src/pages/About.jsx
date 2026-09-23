@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Gem, Leaf, Palette, ArrowRight, ShieldCheck, Star, 
-  Award, Heart, Users, Utensils, CheckCircle2, Sparkles, ChefHat 
+import {
+  Gem, Leaf, Palette, ArrowRight, ShieldCheck, Star,
+  Award, Heart, Users, Utensils, CheckCircle2, Sparkles, ChefHat
 } from 'lucide-react';
 import { siteConfig } from '../data/siteConfig';
 import LightRays from '../components/LightRays';
@@ -54,7 +54,7 @@ const milestones = [
 
 const stats = [
   { label: "Years of Culinary Heritage", value: "25+", icon: Award },
-  { label: "Events & Sadyas Catered", value: "1,200+", icon: Users },
+  { label: "Events & Sadyas Catered", value: "5000+", icon: Users },
   { label: "Pure Vegetarian Recipes", value: "100%", icon: Leaf },
   { label: "Client Satisfaction Rating", value: "4.9 ★", icon: Star }
 ];
@@ -71,12 +71,12 @@ const About = () => {
     let ctx = gsap.context(() => {
       // Hero Intro
       gsap.from('.hero-intro', {
-        y: 40, opacity: 0, duration: 1.2, ease: 'power3.out', stagger: 0.2
+        y: 30, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.15, clearProps: 'all'
       });
 
       // Hero Image
       gsap.from('.hero-image', {
-        scale: 1.05, opacity: 0, duration: 1.5, ease: 'power2.out', delay: 0.2
+        scale: 1.05, opacity: 0, duration: 1.2, ease: 'power2.out', delay: 0.1, clearProps: 'all'
       });
 
       // Path Animations (Desktop & Mobile)
@@ -92,8 +92,8 @@ const About = () => {
             ease: 'none',
             scrollTrigger: {
               trigger: timelineRef.current,
-              start: 'top 60%',
-              end: 'bottom 70%',
+              start: 'top 70%',
+              end: 'bottom 80%',
               scrub: 1.5,
             }
           });
@@ -105,12 +105,14 @@ const About = () => {
         gsap.from(item, {
           scrollTrigger: {
             trigger: item,
-            start: 'top 85%',
+            start: 'top 90%',
+            toggleActions: 'play none none none'
           },
-          y: 40,
+          y: 30,
           opacity: 0,
-          duration: 1,
-          ease: 'power3.out'
+          duration: 0.8,
+          ease: 'power3.out',
+          clearProps: 'all'
         });
       });
 
@@ -118,34 +120,43 @@ const About = () => {
         gsap.from(dot, {
           scrollTrigger: {
             trigger: dot,
-            start: 'top 80%',
+            start: 'top 90%',
+            toggleActions: 'play none none none'
           },
           scale: 0,
           opacity: 0,
-          duration: 0.6,
-          ease: 'back.out(1.5)'
+          duration: 0.5,
+          ease: 'back.out(1.5)',
+          clearProps: 'all'
         });
       });
 
       // Pillars
       gsap.from('.pillar-header > *', {
-        scrollTrigger: { trigger: '.pillar-section', start: 'top 85%' },
-        y: 20, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.1
+        scrollTrigger: { trigger: '.pillar-section', start: 'top 92%', toggleActions: 'play none none none' },
+        y: 20, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.1, clearProps: 'all'
       });
 
       gsap.from('.pillar-card', {
-        scrollTrigger: { trigger: '.pillar-section', start: 'top 75%' },
-        y: 40, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.2
+        scrollTrigger: { trigger: '.pillar-section', start: 'top 92%', toggleActions: 'play none none none' },
+        y: 30, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.15, clearProps: 'all'
       });
 
       // CTA
       gsap.from('.cta-section > *', {
-        scrollTrigger: { trigger: '.cta-section', start: 'top 85%' },
-        y: 30, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.15
+        scrollTrigger: { trigger: '.cta-section', start: 'top 92%', toggleActions: 'play none none none' },
+        y: 30, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.1, clearProps: 'all'
       });
     }, containerRef);
 
-    return () => ctx.revert();
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 400);
+
+    return () => {
+      clearTimeout(timer);
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -199,17 +210,17 @@ const About = () => {
 
         {/* Geometric Background Pattern */}
         <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: bgPattern, backgroundSize: '60px 60px' }}></div>
-        
+
         {/* Glowing Ambient Light Orbs */}
         <div className="absolute top-10 left-10 w-[600px] h-[600px] bg-primary/20 rounded-full filter blur-[150px] animate-stitch-pulse"></div>
         <div className="absolute bottom-10 right-10 w-[650px] h-[650px] bg-secondary/60 rounded-full filter blur-[160px] animate-stitch-pulse" style={{ animationDelay: '-3.5s' }}></div>
       </div>
 
-      <div className="relative z-10 pt-28 md:pt-36 pb-24 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 pt-20 md:pt-28 pb-16 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section 1: Hero Intro */}
-        <div className="max-w-3xl mx-auto mb-16 text-center">
-          
+        <div className="max-w-3xl mx-auto mb-10 text-center">
+
           {/* Status Badge Pills */}
           <div className="hero-intro inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 bg-secondary/70 backdrop-blur-md border border-primary/30 px-4 py-1.5 rounded-full mb-6 text-xs font-medium shadow-lg">
             <span className="flex items-center gap-1.5 text-primary font-bold">
@@ -237,7 +248,7 @@ const About = () => {
         </div>
 
         {/* Hero Image with ScrollExpand */}
-        <div className="hero-intro w-full h-[400px] md:h-[600px] rounded-3xl overflow-hidden mb-24 relative shadow-2xl border border-primary/20">
+        <div className="hero-intro w-full h-[350px] md:h-[500px] rounded-3xl overflow-hidden mb-14 relative shadow-2xl border border-primary/20">
           <ScrollExpand
             src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
             alt="Chef preparing fine dining"
@@ -268,7 +279,7 @@ const About = () => {
         </div>
 
         {/* Stats & Achievements Highlights Bar */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-28">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-16">
           {stats.map((item, idx) => {
             const IconComponent = item.icon;
             return (
@@ -284,8 +295,8 @@ const About = () => {
         </div>
 
         {/* Section 2: Scrolly Curved Timeline */}
-        <div className="relative max-w-5xl mx-auto py-10 mb-28" ref={timelineRef}>
-          <div className="text-center mb-20">
+        <div className="relative max-w-5xl mx-auto py-4 mb-16" ref={timelineRef}>
+          <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest mb-2">
               <Sparkles className="w-4 h-4" /> Our Legacy
             </div>
@@ -385,8 +396,8 @@ const About = () => {
         </div>
 
         {/* Section 3: Our Pillars */}
-        <div className="pillar-section mb-24 border-t border-white/10 pt-20">
-          <div className="pillar-header mb-12 text-center">
+        <div className="pillar-section mb-14 border-t border-white/10 pt-12">
+          <div className="pillar-header mb-8 text-center">
             <div className="inline-flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest mb-2">
               <ShieldCheck className="w-4 h-4 text-emerald-400" /> Our Core Values
             </div>
@@ -442,14 +453,14 @@ const About = () => {
             Let our master chefs craft a custom vegetarian menu tailored to your family tradition, guest count, and event vision.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link 
-              to="/contact" 
+            <Link
+              to="/contact"
               className="px-8 py-3.5 bg-primary text-darkbg font-bold rounded-xl text-xs uppercase tracking-wider hover:bg-primary/95 transition-all shadow-xl flex items-center gap-2"
             >
               <span>Request Catering Quote</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
-            <a 
+            <a
               href={`tel:${siteConfig.contact.phone}`}
               className="px-8 py-3.5 border border-white/15 hover:border-primary text-lighttext hover:text-primary font-bold rounded-xl text-xs uppercase tracking-wider transition-all bg-white/5 flex items-center gap-2"
             >

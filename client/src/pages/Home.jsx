@@ -64,7 +64,7 @@ const Home = () => {
           {/* Hero Stats */}
           <div className="flex items-center gap-8 md:gap-16 pt-6 md:pt-8 max-w-md">
             <div>
-              <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1">250+</h3>
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1">5000+</h3>
               <p className="text-lighttext/85 text-xs md:text-sm uppercase tracking-wider font-semibold">Events Catered</p>
             </div>
             <div>
