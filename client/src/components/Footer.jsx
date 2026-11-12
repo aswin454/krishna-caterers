@@ -4,6 +4,10 @@ import { siteConfig } from '../data/siteConfig';
 import { Instagram, Facebook, Mail, MessageCircle } from 'lucide-react';
 
 const Footer = () => {
+  const whatsappUrl = siteConfig.social?.whatsapp || (siteConfig.contact?.whatsapp 
+    ? `https://wa.me/${siteConfig.contact.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(siteConfig.contact.whatsappMessage || '')}`
+    : '#');
+
   return (
     <footer className="bg-dark text-lighttext pt-24 pb-4 overflow-hidden relative">
       <div className="w-full px-4 md:px-12 max-w-[1400px] mx-auto">
@@ -23,7 +27,7 @@ const Footer = () => {
               <a href={siteConfig.social?.facebook || '#'} target="_blank" rel="noreferrer" aria-label="Facebook" className="w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center hover:border-primary hover:text-primary transition-colors text-lighttext/80 hover:bg-secondary">
                 <Facebook size={20} />
               </a>
-              <a href={siteConfig.social?.whatsapp || '#'} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center hover:border-primary hover:text-primary transition-colors text-lighttext/80 hover:bg-secondary">
+              <a href={whatsappUrl} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center hover:border-primary hover:text-primary transition-colors text-lighttext/80 hover:bg-secondary">
                 <MessageCircle size={20} />
               </a>
               <a href={`mailto:${siteConfig.contact?.email || 'contact@krishnacaterers.com'}`} aria-label="Email" className="w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center hover:border-primary hover:text-primary transition-colors text-lighttext/80 hover:bg-secondary">

@@ -12,6 +12,7 @@ export const siteConfig = {
   },
   social: {
     instagram: "https://www.instagram.com/krishnacaterers.co?utm_source=ig_web_button_share_sheet&igsi=ZDNlZDc0MzIxNw==",
-    facebook: "https://www.facebook.com/people/krishna-caterers/61592924215158/?ref=PROFILE_EDIT_xav_ig_profile_page_web#"
+    facebook: "https://www.facebook.com/people/krishna-caterers/61592924215158/?ref=PROFILE_EDIT_xav_ig_profile_page_web#",
+    whatsapp: "https://wa.me/919207761056?text=Hello%20Krishna%20Caterers,%20I%20would%20like%20to%20enquire%20about%20catering%20services."
   }
 };
