@@ -7,6 +7,7 @@ export const siteConfig = {
     whatsapp: "+91 9207761056",
     email: "Krishnacatering.upr@gmail.com",
     address: "WCW8+746, Chemmanadu, Thiruvaniyoor, Kerala 682308",
+    shortAddress: "Chemmanadu, Thiruvaniyoor, Kerala",
     mapsUrl: "https://www.google.com/maps/search/?api=1&query=WCW8%2B746,+Chemmanadu,+Thiruvaniyoor,+Kerala+682308",
     whatsappMessage: "Hello Krishna Caterers, I would like to enquire about catering services."
   },

@@ -127,7 +127,7 @@ const About = () => {
           opacity: 0,
           duration: 0.5,
           ease: 'back.out(1.5)',
-          clearProps: 'all'
+          transformOrigin: 'center center'
         });
       });
 
@@ -311,9 +311,33 @@ const About = () => {
           <div className="relative">
             {/* Desktop SVG Curve */}
             <div className="hidden sm:block absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-[150px] pointer-events-none">
-              <svg viewBox="0 0 100 1200" preserveAspectRatio="none" className="w-full h-full">
+              <svg viewBox="0 0 100 1200" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                <defs>
+                  <filter id="gold-dot-glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#ffd700" floodOpacity="0.8" />
+                  </filter>
+                </defs>
                 <path d="M 50 0 C 50 40, 100 60, 100 100 C 100 180, 0 220, 0 300 C 0 380, 100 420, 100 500 C 100 580, 0 620, 0 700 C 0 780, 100 820, 100 900 C 100 980, 0 1020, 0 1100 C 0 1140, 50 1160, 50 1200" fill="none" stroke="#d4af37" strokeWidth="1" strokeDasharray="4 4" className="opacity-25" />
                 <path ref={pathRef} d="M 50 0 C 50 40, 100 60, 100 100 C 100 180, 0 220, 0 300 C 0 380, 100 420, 100 500 C 100 580, 0 620, 0 700 C 0 780, 100 820, 100 900 C 100 980, 0 1020, 0 1100 C 0 1140, 50 1160, 50 1200" fill="none" stroke="#ffd700" strokeWidth="4" />
+
+                {/* Milestone Nodes perfectly locked on path peaks */}
+                {[
+                  { cx: 100, cy: 100 },
+                  { cx: 0, cy: 300 },
+                  { cx: 100, cy: 500 },
+                  { cx: 0, cy: 700 },
+                  { cx: 100, cy: 900 },
+                  { cx: 0, cy: 1100 }
+                ].map((pt, i) => (
+                  <g key={i} className="milestone-dot">
+                    {/* Pulsing halo */}
+                    <circle cx={pt.cx} cy={pt.cy} r="14" fill="#ffd700" fillOpacity="0.18" />
+                    {/* Ring */}
+                    <circle cx={pt.cx} cy={pt.cy} r="8" fill="#040d08" stroke="#ffd700" strokeWidth="3" filter="url(#gold-dot-glow)" />
+                    {/* Center point */}
+                    <circle cx={pt.cx} cy={pt.cy} r="2.5" fill="#ffd700" />
+                  </g>
+                ))}
               </svg>
             </div>
 
@@ -363,14 +387,6 @@ const About = () => {
                         )}
                       </div>
 
-                      {/* Center Node (Dot) */}
-                      <div
-                        className="milestone-dot absolute top-1/2 z-10 w-6 h-6 rounded-full bg-darkbg border-[4px] border-primary shadow-[0_0_25px_rgba(255,215,0,0.9)]"
-                        style={{
-                          left: `calc(50% ${isEven ? '+' : '-'} 75px)`,
-                          transform: 'translate(-50%, -50%)'
-                        }}
-                      ></div>
 
                       {/* Right Side Container */}
                       <div className={`w-[42%] milestone-content ${!isEven ? 'text-left' : 'text-right'}`}>

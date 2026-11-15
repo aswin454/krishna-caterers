@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, MapPin } from 'lucide-react';
 import { siteConfig } from '../data/siteConfig';
 
 const Navbar = () => {
@@ -15,7 +15,7 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       setScrolled(currentScrollY > 50);
 
       // Hide when scrolling down, show when scrolling up
@@ -25,7 +25,7 @@ const Navbar = () => {
       } else {
         setIsVisible(true);
       }
-      
+
       lastScrollY.current = currentScrollY;
     };
 
@@ -44,11 +44,15 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-darkbg shadow-md py-3' : 'bg-transparent py-6'} ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-darkbg shadow-md py-3' : 'bg-transparent py-4 md:py-5'} ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
       <div className="w-full px-4 md:px-8">
         <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center">
-            <img src="/images/logo.png" alt={siteConfig.businessName} className="h-16 md:h-24 w-auto drop-shadow-md" />
+          <Link to="/" className="flex flex-col items-center group">
+            <img src="/images/logo.png" alt={siteConfig.businessName} className="h-14 md:h-20 w-auto drop-shadow-md transition-transform duration-300 group-hover:scale-105" />
+            <span className="flex items-center gap-1 text-[10px] md:text-xs text-primary font-medium tracking-wide mt-1.5">
+              <MapPin size={11} className="text-primary shrink-0" />
+              <span>Chemmanadu, Thiruvaniyoor, Kerala</span>
+            </span>
           </Link>
 
           {/* Desktop Nav */}

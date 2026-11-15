@@ -10,6 +10,7 @@ import MoltenMetal from '../components/MoltenMetal';
 
 const Home = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [activeOrbitNode, setActiveOrbitNode] = useState(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -21,7 +22,7 @@ const Home = () => {
   return (
     <div className="">
       {/* Hero Section */}
-      <section className="relative min-h-screen md:h-screen flex items-center bg-darkbg overflow-hidden pt-28 pb-16 md:pt-0 md:pb-0">
+      <section className="relative min-h-screen flex items-center bg-darkbg overflow-hidden pt-36 pb-16 md:pt-40 md:pb-16">
         <div className="absolute inset-0">
           <img
             src="/images/hero.png"
@@ -32,7 +33,7 @@ const Home = () => {
           {/* Smooth bottom fade */}
           <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-darkbg to-transparent"></div>
         </div>
-        <div className="w-full px-4 md:px-8 relative z-10 text-left text-lighttext">
+        <div className="w-full px-4 md:px-8 relative z-10 text-left text-lighttext mt-2 md:mt-6">
           <div className="mb-6 max-w-3xl flex flex-col gap-2">
             {siteConfig.tagline.split('. ').map((part, index, array) => (
               <StrokeText
@@ -198,20 +199,26 @@ const Home = () => {
 
             {/* Right Circular Diagram */}
             <div className="relative flex items-center justify-center w-full lg:w-auto h-[400px] md:h-[480px] lg:h-[550px] mt-12 lg:mt-0 overflow-visible lg:pr-8">
-              {/* Rotating Wrapper */}
+              {/* Rotating Wrapper - Pauses smoothly when hovering any node for 100% precision */}
               <div
-                className="relative w-[300px] h-[300px] sm:w-[360px] sm:h-[360px] md:w-[460px] md:h-[460px] flex justify-center items-center animate-spin"
-                style={{ animation: 'spin 120s linear infinite' }}
+                className="relative w-[300px] h-[300px] sm:w-[360px] sm:h-[360px] md:w-[460px] md:h-[460px] flex justify-center items-center"
+                style={{
+                  animation: 'spin 120s linear infinite',
+                  animationPlayState: activeOrbitNode !== null ? 'paused' : 'running'
+                }}
               >
-                {/* Outer solid circle (formerly dashed) */}
+                {/* Outer solid circle */}
                 <div className="absolute w-[260px] h-[260px] sm:w-[320px] sm:h-[320px] md:w-[420px] md:h-[420px] rounded-full border border-primary/40 pointer-events-none shadow-[0_0_40px_rgba(212,175,55,0.05)]"></div>
                 {/* Inner solid circle */}
                 <div className="absolute w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] md:w-[260px] md:h-[260px] rounded-full border border-primary/30 pointer-events-none shadow-[0_0_50px_rgba(212,175,55,0.05)]"></div>
 
-                {/* Center Hub (Counter rotates so logo stays upright) */}
+                {/* Center Hub */}
                 <div
-                  className="relative z-10 w-20 h-20 md:w-28 md:h-28 rounded-2xl md:rounded-[2rem] border border-primary/50 bg-secondary flex flex-col items-center justify-center shadow-[0_0_30px_rgba(212,175,55,0.2)] animate-spin"
-                  style={{ animation: 'spin 120s linear infinite reverse' }}
+                  className="relative z-10 w-20 h-20 md:w-28 md:h-28 rounded-2xl md:rounded-[2rem] border border-primary/50 bg-secondary flex flex-col items-center justify-center shadow-[0_0_30px_rgba(212,175,55,0.2)] pointer-events-none"
+                  style={{
+                    animation: 'spin 120s linear infinite reverse',
+                    animationPlayState: activeOrbitNode !== null ? 'paused' : 'running'
+                  }}
                 >
                   <img src="/images/logo.png" alt="Logo" className="h-8 md:h-12 w-auto opacity-90 mb-1" />
                   <span className="text-[8px] md:text-[10px] font-bold text-primary tracking-widest uppercase">Krishna</span>
@@ -226,43 +233,75 @@ const Home = () => {
                   { icon: <Leaf size={20} />, title: "Pure Vegetarian", desc: "Sacred, authentic vegetarian cuisine prepared with unmatched hygiene.", angle: 240 },
                   { icon: <ChefHat size={20} />, title: "Culinary Excellence", desc: "Seasoned master chefs and hospitality staff delivering flawless execution.", angle: 300 }
                 ].map((node, index) => {
+                  const isActive = activeOrbitNode === index;
+                  
+                  // Outward radial tooltip placement
+                  const tooltipPlacement =
+                    node.angle === 0
+                      ? 'bottom-full left-1/2 -translate-x-1/2 mb-4'
+                      : node.angle === 180
+                      ? 'top-full left-1/2 -translate-x-1/2 mt-4'
+                      : node.angle === 60 || node.angle === 120
+                      ? 'left-full top-1/2 -translate-y-1/2 ml-4'
+                      : 'right-full top-1/2 -translate-y-1/2 mr-4';
+
                   return (
                     <div
                       key={index}
-                      className="absolute inset-0 pointer-events-none z-20 group-hover:z-50 flex justify-center"
-                      style={{ transform: `rotate(${node.angle}deg)` }}
+                      className="absolute inset-0 pointer-events-none flex justify-center"
+                      style={{
+                        transform: `rotate(${node.angle}deg)`,
+                        zIndex: isActive ? 60 : 20
+                      }}
                     >
                       {/* Position exactly on the outer circle edge */}
-                      <div className="absolute -top-1 md:-top-2 pointer-events-auto group relative">
+                      <div className="absolute -top-1 md:-top-2 pointer-events-none relative flex flex-col items-center">
 
                         {/* Counter Spin to keep node upright during orbit */}
-                        <div className="animate-spin" style={{ animation: 'spin 120s linear infinite reverse' }}>
-
+                        <div
+                          style={{
+                            animation: 'spin 120s linear infinite reverse',
+                            animationPlayState: activeOrbitNode !== null ? 'paused' : 'running'
+                          }}
+                        >
                           {/* Cancel the placement rotation so the node is completely upright */}
                           <div className="flex flex-col items-center relative" style={{ transform: `rotate(${-node.angle}deg)` }}>
-                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-darkbg border-2 border-primary/40 flex items-center justify-center text-lighttext/80 hover:text-primary hover:border-primary hover:bg-[#143625] transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(212,175,55,0.15)] relative z-20">
+                            
+                            {/* Strict Hit-Target Button */}
+                            <button
+                              type="button"
+                              aria-label={node.title}
+                              onMouseEnter={() => setActiveOrbitNode(index)}
+                              onMouseLeave={() => setActiveOrbitNode(null)}
+                              onClick={() => setActiveOrbitNode(isActive ? null : index)}
+                              className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-darkbg border-2 flex items-center justify-center transition-all duration-300 cursor-pointer pointer-events-auto relative z-30 shadow-[0_0_15px_rgba(212,175,55,0.15)] ${
+                                isActive
+                                  ? 'border-primary text-primary bg-[#143625] scale-110 shadow-[0_0_25px_rgba(212,175,55,0.5)]'
+                                  : 'border-primary/40 text-lighttext/80 hover:text-primary hover:border-primary hover:bg-[#143625]'
+                              }`}
+                            >
                               {node.icon}
-
-                              {/* Smart Outward Tooltip Popup */}
-                              <div
-                                className={`absolute w-52 md:w-64 p-4 rounded-xl bg-[#06180e]/95 backdrop-blur-md border border-primary/60 shadow-[0_15px_35px_rgba(0,0,0,0.8)] opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 ease-out pointer-events-none z-50 text-left
-                                  ${(node.angle === 240 || node.angle === 300 || node.angle === 0) ? 'bottom-full left-1/2 -translate-x-1/2 mb-4' : 'top-full left-1/2 -translate-x-1/2 mt-4'}
-                                `}
-                              >
-                                <h4 className="font-bold text-primary text-sm md:text-base mb-1 flex items-center gap-1.5">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>
-                                  {node.title}
-                                </h4>
-                                <p className="text-xs text-lighttext/90 leading-relaxed">{node.desc}</p>
-                              </div>
-                            </div>
+                            </button>
 
                             {/* Upright Label below icon */}
-                            <span className="hidden sm:block absolute -bottom-6 text-[10px] md:text-xs text-lighttext/80 font-semibold whitespace-nowrap bg-darkbg/80 px-2 py-0.5 rounded-full border border-white/5 backdrop-blur-xs">
+                            <span className="hidden sm:block absolute -bottom-6 text-[10px] md:text-xs text-lighttext/80 font-semibold whitespace-nowrap bg-darkbg/85 px-2 py-0.5 rounded-full border border-white/5 backdrop-blur-xs pointer-events-none">
                               {node.title}
                             </span>
-                          </div>
 
+                            {/* Precision Outward Tooltip */}
+                            <div
+                              className={`absolute w-52 md:w-64 p-4 rounded-xl bg-[#06180e]/95 backdrop-blur-md border border-primary/60 shadow-[0_15px_35px_rgba(0,0,0,0.8)] transition-all duration-300 ease-out pointer-events-none z-50 text-left ${tooltipPlacement} ${
+                                isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                              }`}
+                            >
+                              <h4 className="font-bold text-primary text-sm md:text-base mb-1 flex items-center gap-1.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>
+                                {node.title}
+                              </h4>
+                              <p className="text-xs text-lighttext/90 leading-relaxed font-normal">{node.desc}</p>
+                            </div>
+
+                          </div>
                         </div>
                       </div>
                     </div>

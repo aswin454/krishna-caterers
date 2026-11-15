@@ -119,7 +119,7 @@ const Preloader = ({ onComplete }) => {
 
       {/* Decorative Bottom Tag */}
       <div className="absolute bottom-10 text-[8px] sm:text-[9px] text-lighttext/20 uppercase tracking-[0.4em] font-light z-10">
-        Est. 2011 • Pure & Vegetarian
+        Est. 2000 • Pure & Vegetarian
       </div>
     </div>
   );
